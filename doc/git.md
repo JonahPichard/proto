@@ -2,7 +2,7 @@
 
 ## REPO git
 
-`git repo https://github.com/JonahPichard/proto.git`
+`git clone https://github.com/JonahPichard/proto.git`
 
 ## Branche
 Changement de branche
@@ -10,3 +10,5 @@ Changement de branche
 
 Création d'une branche
 `git branch <nom_de_la_branche>`
+
+
