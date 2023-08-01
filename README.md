@@ -1,5 +1,3 @@
 # Proto
 
-## Repo git
-
-git clone <lien du git>
+Projet de notre premier jeu. Un Tower defense roguelike (enfin je crois)
