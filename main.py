@@ -18,6 +18,7 @@ class Game:
         Init Element
         '''     
         self.world = World()
+        self.world.createWorld()
         self.player = Player((10, 10), [self.world.visible_sprites])
         
     def run(self):
