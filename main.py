@@ -1,8 +1,8 @@
 import pygame, sys
 from settings import *
 from debug import debug
-from world import World
-from player import Player
+from src.world import World
+from src.player import Player
 
 
 class Game:
