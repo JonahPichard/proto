@@ -1,6 +1,6 @@
 import pygame
 from settings import *
-from tile import Tile
+from src.tile import Tile
 
 class World():
     def __init__(self):
