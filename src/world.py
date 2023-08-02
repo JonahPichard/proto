@@ -41,7 +41,7 @@ class World():
         #         y= col * TILE_SIZE
         #         Tile((x,y), [self.ground_sprites])
 
-        self.player = Player((10, 10), [self.visible_sprites], self.createAttack, self.destory_attack)   
+        self.player = Player((WIDTH / 2, HEIGHT / 2), [self.visible_sprites], self.createAttack, self.destory_attack)   
         
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):
@@ -53,7 +53,7 @@ class YsortCameraGroup(pygame.sprite.Group):
         self.half_height = self.display_surface.get_size()[1]/2
         self.offset = pygame.math.Vector2()
         
-        self.ground_surf = pygame.image.load('assets\map.png').convert()
+        self.ground_surf = pygame.image.load('assets\map_empty_80_45.png').convert()
         self.ground_rect = self.ground_surf.get_rect(topleft= (0, 0))
 
     def draw(self, player):
