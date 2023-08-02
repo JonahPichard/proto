@@ -2,7 +2,6 @@ import pygame, sys
 from settings import *
 from debug import debug
 from src.world import World
-from src.player import Player
 
 
 class Game:
@@ -18,8 +17,7 @@ class Game:
         Init Element
         '''     
         self.world = World()
-        self.world.createWorld()
-        self.player = Player((10, 10), [self.world.visible_sprites])
+       
         
     def run(self):
         while True:
@@ -28,8 +26,7 @@ class Game:
             Display Elements
             '''
             self.screen.fill('black')
-            self.world.run(self.player)
-            
+            self.world.run()
             
             '''
             Event Handler
@@ -38,6 +35,8 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == pygame.MOUSEWHEEL:
+                    self.world.player.switch_weapon()
                     
             pygame.display.update()
             self.clock.tick(FPS)
