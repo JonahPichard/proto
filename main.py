@@ -9,6 +9,7 @@ class Game:
         
         #general setup
         pygame.init()
+        pygame.joystick.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption('Proto')
         self.clock = pygame.time.Clock()
@@ -17,6 +18,8 @@ class Game:
         Init Element
         '''     
         self.world = World()
+        
+        #controler
        
         
     def run(self):
@@ -35,6 +38,10 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == pygame.JOYDEVICEADDED:
+                    joy = pygame.joystick.Joystick(event.device_index)
+                    self.world.player.joysticks.append(joy)
+                    print("Controller connected, keyboard don't work ")
                 elif event.type == pygame.MOUSEWHEEL:
                     self.world.player.switch_weapon()
                     
