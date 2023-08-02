@@ -1,6 +1,3 @@
-import warnings
-warnings.filterwarnings("ignore", category=RuntimeWarning)
-
 import pygame
 from settings import *
 from enum import Enum
@@ -26,16 +23,14 @@ class Player(pygame.sprite.Sprite) :
         self.weapon = list(weapons_data.keys())[self.weapon_index]
         self.can_switch_weapon = True
         self.weapon_switch_time = None
-        self.swicth_weapon_cooldown = 1000
+        self.swicth_weapon_cooldown = PLAYER_SWITCH_WEAPON_COOLDOWN
 
-        
         #Attack attributes
         self.attack_time = None
         self.attack_cooldown = PLAYER_ATTACK_COOLDOWN
         self.attacking = False
         self.attack_point = PLAYER_ATTACK_POINTS
-        
-        
+           
         #health attributes
         self.health_point = PLAYER_HEALTH_POINTS
         
@@ -44,6 +39,10 @@ class Player(pygame.sprite.Sprite) :
         self.status = 'down_idle'
         self.frame_index = 0
         self.animation_speed = 0.1
+        
+        #controller
+        self.joysticks = []
+        self.deadzone = 0.4
     
     def import_player_assets(self):
         character_path = 'assets/player'
@@ -128,19 +127,54 @@ class Player(pygame.sprite.Sprite) :
                 self.direction.x = 0
                 
             #attack input
-            if mouses[0] and not self.attacking:
-                self.attacking = True
-                self.attack_time = pygame.time.get_ticks()
-                self.create_attack()
-    
+            if mouses[0]:
+                self.attack()
+            
+            '''
+            Joystick
+            '''
+            if len(self.joysticks) > 0:
+                joystick = self.joysticks[0]
+                
+                #movement
+                if joystick.get_axis(1) < -self.deadzone:
+                    self.direction.y =-1
+                    self.status = 'up'
+                elif joystick.get_axis(1) > self.deadzone:
+                    self.direction.y = 1
+                    self.status = 'down'
+                else:
+                    self.direction.y = 0
+                    
+                if joystick.get_axis(0) < -self.deadzone:
+                    self.direction.x = -1
+                    self.status = 'left'
+                elif joystick.get_axis(0) > self.deadzone:
+                    self.direction.x = 1
+                    self.status = 'right'
+                else:
+                    self.direction.x = 0
+                
+                #attack
+                if joystick.get_button(0):
+                    self.attack()
+                # swicth_weapon
+                elif joystick.get_button(3):
+                    self.switch_weapon()
+                    
     def switch_weapon(self):
         if self.can_switch_weapon :
             self.can_switch_weapon = False
             self.weapon_switch_time = pygame.time.get_ticks()
-            print(len(list(weapons_data)))
             self.weapon_index = (self.weapon_index + 1) % len(list(weapons_data))
             self.weapon = list(weapons_data.keys())[self.weapon_index]
-            
+    
+    def attack(self):
+        if not self.attacking:
+            self.attacking = True
+            self.attack_time = pygame.time.get_ticks()
+            self.create_attack()
+      
     def move(self):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
@@ -176,10 +210,9 @@ class Player(pygame.sprite.Sprite) :
                 self.destory_attack()
                 
         if not self.can_switch_weapon : 
-            if current_time-self.weapon_switch_time >= self.can_switch_weapon:
+            if current_time - self.weapon_switch_time >= self.swicth_weapon_cooldown:
                 self.can_switch_weapon = True
                 
-    
     def update(self):
         self.input()
         self.cooldowns()
