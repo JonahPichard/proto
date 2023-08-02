@@ -47,10 +47,10 @@ class World():
                     y = row_index * TILE_SIZE
                     if tile_id != 0 :
                         if style == 'boundary':
-                            Tile((x,y),[self.visible_sprites, self.obstacle_sprites], 'invisible')
+                            Tile((x,y),[self.obstacle_sprites], 'invisible')
                             
 
-        self.player = Player((WIDTH / 2, HEIGHT / 2), [self.visible_sprites, self.obstacle_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
+        self.player = Player((WIDTH / 2, HEIGHT / 2), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
         
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):

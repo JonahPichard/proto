@@ -13,7 +13,7 @@ class Player(pygame.sprite.Sprite) :
         spritesheet_sprite = SpriteSheet(spritesheet_image)
         self.image = spritesheet_sprite.get_image(0, 0, 16, 16)
         self.rect = self.image.get_rect(topleft = position)
-        self.hitbox = self.rect.inflate(0, -5)
+        self.hitbox = self.rect.inflate(0, -10)
         self.obstacle_sprites = obstacle_sprites
 
         #movement attributes
@@ -138,7 +138,6 @@ class Player(pygame.sprite.Sprite) :
         if self.can_switch_weapon :
             self.can_switch_weapon = False
             self.weapon_switch_time = pygame.time.get_ticks()
-            print(len(list(weapons_data)))
             self.weapon_index = (self.weapon_index + 1) % len(list(weapons_data))
             self.weapon = list(weapons_data.keys())[self.weapon_index]
             
@@ -153,14 +152,14 @@ class Player(pygame.sprite.Sprite) :
         self.rect.center = self.hitbox.center
         
     def collision(self, direction):
-        print(len(self.obstacle_sprites))
         if direction == 'horizontal':
-            for sprite in self.obstacle_sprites:
+            for i, sprite in enumerate(self.obstacle_sprites):
                 if sprite.hitbox.colliderect(self.hitbox):
                     if self.direction.x > 0:
                         self.hitbox.right = sprite.hitbox.left
                     elif self.direction.x < 0:
                         self.hitbox.left = sprite.hitbox.right
+                    print(i)
         if direction == 'vertical':
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
