@@ -6,7 +6,7 @@ from settings import *
 from enum import Enum
 
 class Player(pygame.sprite.Sprite) : 
-    def __init__(self, position, groups, create_attack, destory_attack):
+    def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack):
         super().__init__(groups)
         
         spritesheet_image = pygame.image.load('assets/player/idle.png').convert_alpha()
@@ -14,6 +14,7 @@ class Player(pygame.sprite.Sprite) :
         self.image = spritesheet_sprite.get_image(0, 0, 16, 16)
         self.rect = self.image.get_rect(topleft = position)
         self.hitbox = self.rect.inflate(0, -5)
+        self.obstacle_sprites = obstacle_sprites
 
         #movement attributes
         self.direction = pygame.math.Vector2()
@@ -145,13 +146,14 @@ class Player(pygame.sprite.Sprite) :
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
         self.hitbox.x += self.direction.x * self.speed
-        # self.collision('horizontal')
+        self.collision('horizontal')
         self.hitbox.y += self.direction.y * self.speed
-        # self.collision('vertical')
+        self.collision('vertical')
         
         self.rect.center = self.hitbox.center
         
     def collision(self, direction):
+        print(len(self.obstacle_sprites))
         if direction == 'horizontal':
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):

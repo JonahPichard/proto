@@ -5,10 +5,12 @@ from debug import debug
 
 from src.player import Player
 from src.weapon import Weapon
+from src.toolbox.import_world import get_boundary
 
 class World():
     def __init__(self):
-        
+        # map
+        self.map_name = EMPTY_MAP
         # get the display surface
         self.display_surface = pygame.display.get_surface()
         # spirte group setup
@@ -35,13 +37,20 @@ class World():
         self.current_attack = None
         
     def createWorld(self):
-        # for col in range(int(HEIGHT/TILE_SIZE)):
-        #     for row in range(int(WIDTH/TILE_SIZE)):
-        #         x = row * TILE_SIZE
-        #         y= col * TILE_SIZE
-        #         Tile((x,y), [self.ground_sprites])
+        layout = {
+            "boundary" : get_boundary("assets\\map\\tmx\\"+self.map_name+".tmx")
+                  }
+        for style, layer in layout.items():
+            for row_index, row in enumerate(layer):
+                for col_index, tile_id in enumerate(row):
+                    x = col_index * TILE_SIZE
+                    y = row_index * TILE_SIZE
+                    if tile_id != 0 :
+                        if style == 'boundary':
+                            Tile((x,y),[self.visible_sprites, self.obstacle_sprites], 'invisible')
+                            
 
-        self.player = Player((WIDTH / 2, HEIGHT / 2), [self.visible_sprites], self.createAttack, self.destory_attack)   
+        self.player = Player((WIDTH / 2, HEIGHT / 2), [self.visible_sprites, self.obstacle_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
         
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):
@@ -53,7 +62,7 @@ class YsortCameraGroup(pygame.sprite.Group):
         self.half_height = self.display_surface.get_size()[1]/2
         self.offset = pygame.math.Vector2()
         
-        self.ground_surf = pygame.image.load('assets\map_empty_80_45.png').convert()
+        self.ground_surf = pygame.image.load('assets\\map\\png\\map_empty_80_45.png').convert()
         self.ground_rect = self.ground_surf.get_rect(topleft= (0, 0))
 
     def draw(self, player):
