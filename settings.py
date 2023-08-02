@@ -16,3 +16,7 @@ PLAYER_SWITCH_WEAPON_COOLDOWN = 1000
 weapons_data = {
     'sword' : {'cooldown' : 100, 'damage' : 15, 'graphic' : ''},
     'axe' : {'cooldown' : 50, 'damage' : 7, 'graphic' : ''}}
+
+monster_data = {
+    'skull' : {'health' : 20, 'damage' : 15, 'exp' :100, 'attack_type' : 'slash', 'attack_sound' : None, 'speed' : 5, 'resistance' : 3, 'attack_radius': 80, 'notice_radius': 360},
+    'cyclop' : {'health' : 100, 'damage' : 25, 'exp' :250, 'attack_type' : 'claw', 'attack_sound' : None, 'speed' : 3, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 360}}

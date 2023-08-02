@@ -41,7 +41,7 @@ class World():
         #         y= col * TILE_SIZE
         #         Tile((x,y), [self.ground_sprites])
 
-        self.player = Player((WIDTH / 2, HEIGHT / 2), [self.visible_sprites], self.createAttack, self.destory_attack)   
+        self.player = Player((WIDTH / 2, HEIGHT / 2), [self.visible_sprites], self.createAttack, self.destory_attack)  
         
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):
