@@ -1,6 +1,10 @@
 import pygame
 from settings import *
 from src.tile import Tile
+from debug import debug
+
+from src.player import Player
+from src.weapon import Weapon
 
 class World():
     def __init__(self):
@@ -10,19 +14,34 @@ class World():
         # spirte group setup
         self.visible_sprites = YsortCameraGroup()
         self.obstacle_sprites = pygame.sprite.Group()
+
+        #attack sprites
+        self.current_attack = None
+
+        #sprite setup
+        self.createWorld()
         
-    def run(self, player):
+    def run(self):
         #update and draw the game
-        self.visible_sprites.draw(player)
+        self.visible_sprites.draw(self.player)
         self.visible_sprites.update()
+
+    def createAttack(self):
+        self.current_attack = Weapon(self.player, [self.visible_sprites])
+
+    def destory_attack(self):
+        if self.current_attack:
+            self.current_attack.kill()
+        self.current_attack = None
         
     def createWorld(self):
-        pass
         # for col in range(int(HEIGHT/TILE_SIZE)):
         #     for row in range(int(WIDTH/TILE_SIZE)):
         #         x = row * TILE_SIZE
         #         y= col * TILE_SIZE
-        #         Tile((x,y), [self.ground_sprites])   
+        #         Tile((x,y), [self.ground_sprites])
+
+        self.player = Player((10, 10), [self.visible_sprites], self.createAttack, self.destory_attack)   
         
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):
@@ -48,6 +67,6 @@ class YsortCameraGroup(pygame.sprite.Group):
         ground_surf_pos = self.ground_rect.topleft - self.offset
         self.display_surface.blit(self.ground_surf, ground_surf_pos)
         
-        for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.y):
+        for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
             offset_position = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_position)
