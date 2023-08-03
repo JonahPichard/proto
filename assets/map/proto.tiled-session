@@ -1,9 +1,9 @@
 {
     "activeFile": "tmx/map_empty_80_45.tmx",
     "expandedProjectPaths": [
+        ".",
         "tmx",
         "tsx",
-        ".",
         "rule"
     ],
     "fileStates": {
@@ -19,11 +19,11 @@
             }
         },
         "tmx/map_empty_80_45.tmx": {
-            "scale": 0.33,
+            "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 757.5757575757576,
-                "y": 518.1818181818182
+                "x": 633.3333333333334,
+                "y": 323.99999999999994
             }
         },
         "tsx/data.tsx": {

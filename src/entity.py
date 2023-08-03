@@ -1,4 +1,5 @@
 import pygame
+from settings import *
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups):
@@ -23,6 +24,8 @@ class Entity(pygame.sprite.Sprite):
         self.rect.center = self.hitbox.center
         
     def collision(self, direction):
+        # TODO enemy collision
+        # TODO Hitbox du player doit seulement etre  sur ces pied
         if direction == 'horizontal':
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
@@ -55,7 +58,7 @@ class SpriteSheet():
     def get_image(self, x, y, width, height):
         image = pygame.Surface((width, height)).convert_alpha()
         image.blit(self.sheet, (0, 0), (x, y, width, height))
-        image = pygame.transform.scale(image, (width * 4, height * 4))
+        image = pygame.transform.scale(image, (width * GAME_UPSCALE, height * GAME_UPSCALE))
         image.set_colorkey('black')
         image.convert()
 

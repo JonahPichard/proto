@@ -46,11 +46,11 @@ class World():
         for style, layer in layout.items():
             for row_index, row in enumerate(layer):
                 for col_index, tile_id in enumerate(row):
-                    x = col_index * TILE_SIZE
-                    y = row_index * TILE_SIZE
+                    x = col_index * TILE_SIZE * GAME_UPSCALE
+                    y = row_index * TILE_SIZE * GAME_UPSCALE
                     if tile_id != 0 :
                         if style == 'boundary':
-                            Tile((x,y),[self.obstacle_sprites], 'invisible')
+                            Tile((x,y),[self.obstacle_sprites,self.visible_sprites], 'invisible')
                     if style =='data':
                         if tile_id == 21 :
                             player_spawn.append([x, y])
@@ -72,7 +72,7 @@ class World():
         for enemy in monster_data.keys():
             enemy_list.append(enemy)
 
-        gap = 100
+        # gap = 100
         for _ in range(numberOfEnemy):
             # positions = [[random.randint(0 + gap, 200), random.randint(800, WIDTH - gap)], [random.randint(0 + gap, 200), random.randint(500, HEIGHT - gap)]]
             # position = [positions[0][random.randint(0, 1)], positions[1][random.randint(0, 1)]]
@@ -88,17 +88,19 @@ class YsortCameraGroup(pygame.sprite.Group):
         self.half_width = self.display_surface.get_size()[0]/2
         self.half_height = self.display_surface.get_size()[1]/2
         self.offset = pygame.math.Vector2()
-        
-        self.ground_surf = pygame.image.load('assets\\map\\png\\map_empty_80_45.png').convert()
+        # TODO Agrandir la map avec de l'eau pour ne pas voir le noir sur les bord de la map
+        self.ground_surf = pygame.image.load(f'assets\\map\\png\\map_empty_80_45.png').convert()
+        # TODO Remplacer WIDTH et HEIGHT par la vrai taiile de la map
+        self.ground_surf = pygame.transform.scale(self.ground_surf, (WIDTH * GAME_UPSCALE, HEIGHT * GAME_UPSCALE))
         self.ground_rect = self.ground_surf.get_rect(topleft= (0, 0))
 
     def draw(self, player):
         
         #getting the offset
-        # self.offset.x = player.rect.centerx - self.half_width
-        # self.offset.y = player.rect.centery - self.half_height
-        self.offset.x = 0
-        self.offset.y = 0
+        self.offset.x = player.rect.centerx - self.half_width
+        self.offset.y = player.rect.centery - self.half_height
+        # self.offset.x = 0
+        # self.offset.y = 0
         
         ground_surf_pos = self.ground_rect.topleft - self.offset
         self.display_surface.blit(self.ground_surf, ground_surf_pos)

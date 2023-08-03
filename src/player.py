@@ -3,6 +3,7 @@ from settings import *
 from enum import Enum
 from src.entity import *
 
+
 class Player(Entity) : 
     def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack):
         super().__init__(groups)
@@ -11,7 +12,7 @@ class Player(Entity) :
         spritesheet_sprite = SpriteSheet(spritesheet_image)
         self.image = spritesheet_sprite.get_image(0, 0, 16, 16)
         self.rect = self.image.get_rect(topleft = position)
-        self.hitbox = self.rect.inflate(0, -10)
+        self.hitbox = self.rect.inflate(0, 0).move(0,0)
         self.obstacle_sprites = obstacle_sprites
 
         #movement attributes
