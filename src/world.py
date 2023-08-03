@@ -6,7 +6,7 @@ from debug import debug
 from src.player import Player
 from src.weapon import Weapon
 from src.enemy import Enemy
-from src.toolbox.import_world import get_boundary
+from src.toolbox.import_world import get_info_map
 
 class World():
     def __init__(self):
@@ -18,6 +18,8 @@ class World():
         self.visible_sprites = YsortCameraGroup()
         self.obstacle_sprites = pygame.sprite.Group()
 
+        # mob spawn zone 
+        self.mob_spawn = []
         #attack sprites
         self.current_attack = None
 
@@ -39,8 +41,8 @@ class World():
         self.current_attack = None
         
     def createWorld(self):
-        layout = {
-            "boundary" : get_boundary("assets\\map\\tmx\\"+self.map_name+".tmx")}
+        player_spawn = []
+        layout = get_info_map(self.map_name)
         for style, layer in layout.items():
             for row_index, row in enumerate(layer):
                 for col_index, tile_id in enumerate(row):
@@ -49,9 +51,20 @@ class World():
                     if tile_id != 0 :
                         if style == 'boundary':
                             Tile((x,y),[self.obstacle_sprites], 'invisible')
-                            
-
-        self.player = Player((WIDTH / 2, HEIGHT / 2), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
+                    if style =='data':
+                        if tile_id == 21 :
+                            player_spawn.append([x, y])
+                        if tile_id == 22 :
+                            self.mob_spawn.append([x, y])
+        if len(player_spawn) == 0 :
+            player_spawn.append([WIDTH/2, HEIGHT/2])
+            # TODO ficher de log
+            print(f'INFO - Pas de tile de spawn du joueur dans {self.map_name}')
+        if len(self.mob_spawn) == 0 :
+            self.mob_spawn.append([WIDTH/2, HEIGHT/2])
+            print(f'INFO - Pas de tile de spawn des ennemies dans {self.map_name}')
+        
+        self.player = Player((random.choice(player_spawn)), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
         self.spawnEnemy(5)
 
     def spawnEnemy(self, numberOfEnemy):
@@ -61,8 +74,9 @@ class World():
 
         gap = 100
         for _ in range(numberOfEnemy):
-            positions = [[random.randint(0 + gap, 200), random.randint(800, WIDTH - gap)], [random.randint(0 + gap, 200), random.randint(500, HEIGHT - gap)]]
-            position = [positions[0][random.randint(0, 1)], positions[1][random.randint(0, 1)]]
+            # positions = [[random.randint(0 + gap, 200), random.randint(800, WIDTH - gap)], [random.randint(0 + gap, 200), random.randint(500, HEIGHT - gap)]]
+            # position = [positions[0][random.randint(0, 1)], positions[1][random.randint(0, 1)]]
+            position = random.choice(self.mob_spawn)
             Enemy((enemy_list[random.randint(0, len(enemy_list)-1)]), position, [self.visible_sprites], self.obstacle_sprites)
        
 class YsortCameraGroup(pygame.sprite.Group):
