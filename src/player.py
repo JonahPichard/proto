@@ -1,10 +1,10 @@
 import pygame
 from settings import *
 from enum import Enum
-from src.entity import Entity
+from src.entity import *
 
 class Player(Entity) : 
-    def __init__(self, position, groups, create_attack, destory_attack):
+    def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack):
         super().__init__(groups)
         
         spritesheet_image = pygame.image.load('assets/player/idle.png').convert_alpha()
@@ -15,6 +15,7 @@ class Player(Entity) :
 
         #movement attributes
         self.speed = PLAYER_SPEED
+        self.obstacle_sprites = obstacle_sprites
 
         #weapon
         self.create_attack = create_attack
@@ -36,7 +37,6 @@ class Player(Entity) :
         
         #graphic setup
         self.import_player_assets()
-        self.status = 'down_idle'
         
         #controller
         self.joysticks = []
@@ -89,16 +89,6 @@ class Player(Entity) :
                     self.status = self.status.replace('attack', 'walk')
                 else:
                     self.status = self.status + '_walk'
-              
-    def animate(self):
-        animation = self.animations[self.status]
-
-        self.frame_index +=self.animation_speed
-        if self.frame_index >= len(animation):
-            self.frame_index = 0
-
-        self.image = animation[int(self.frame_index)]
-        self.rect = self.image.get_rect(center = self.hitbox.center)
         
     def input(self):
         if not self.attacking:
@@ -191,16 +181,3 @@ class Player(Entity) :
         self.get_status()
         self.animate()
         self.move()
-
-class SpriteSheet():
-    def __init__(self, image):
-        self.sheet = image.convert_alpha()
-
-    def get_image(self, x, y, width, height):
-        image = pygame.Surface((width, height)).convert_alpha()
-        image.blit(self.sheet, (0, 0), (x, y, width, height))
-        image = pygame.transform.scale(image, (width * 4, height * 4))
-        image.set_colorkey('black')
-        image.convert()
-
-        return image

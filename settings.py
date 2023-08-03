@@ -19,4 +19,4 @@ weapons_data = {
 
 monster_data = {
     'skull' : {'health' : 20, 'damage' : 15, 'exp' :100, 'attack_type' : 'slash', 'attack_sound' : None, 'speed' : 5, 'resistance' : 3, 'attack_radius': 80, 'notice_radius': 360},
-    'cyclop' : {'health' : 100, 'damage' : 25, 'exp' :250, 'attack_type' : 'claw', 'attack_sound' : None, 'speed' : 3, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 360}}
+    'cyclope' : {'health' : 100, 'damage' : 25, 'exp' :250, 'attack_type' : 'claw', 'attack_sound' : None, 'speed' : 3, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 360}}

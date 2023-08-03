@@ -9,9 +9,8 @@ class Entity(pygame.sprite.Sprite):
         
         #graphic setup
         self.frame_index = 0
+        self.status = 'down_idle'
         self.animation_speed = 0.15
-        
-        
         
     def move(self):
         if self.direction.magnitude() != 0:
@@ -38,3 +37,26 @@ class Entity(pygame.sprite.Sprite):
                         self.hitbox.bottom = sprite.hitbox.top
                     elif self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
+
+    def animate(self):
+        animation = self.animations[self.status]
+
+        self.frame_index +=self.animation_speed
+        if self.frame_index >= len(animation):
+            self.frame_index = 0
+
+        self.image = animation[int(self.frame_index)]
+        self.rect = self.image.get_rect(center = self.hitbox.center)
+
+class SpriteSheet():
+    def __init__(self, image):
+        self.sheet = image.convert_alpha()
+
+    def get_image(self, x, y, width, height):
+        image = pygame.Surface((width, height)).convert_alpha()
+        image.blit(self.sheet, (0, 0), (x, y, width, height))
+        image = pygame.transform.scale(image, (width * 4, height * 4))
+        image.set_colorkey('black')
+        image.convert()
+
+        return image
