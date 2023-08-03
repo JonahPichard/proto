@@ -18,10 +18,7 @@ class Game:
         Init Element
         '''     
         self.world = World()
-        
-        #controler
-       
-        
+           
     def run(self):
         while True:
             

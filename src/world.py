@@ -1,10 +1,11 @@
-import pygame
+import pygame, random
 from settings import *
 from src.tile import Tile
 from debug import debug
 
 from src.player import Player
 from src.weapon import Weapon
+from src.enemy import Enemy
 from src.toolbox.import_world import get_boundary
 
 class World():
@@ -27,6 +28,7 @@ class World():
         #update and draw the game
         self.visible_sprites.draw(self.player)
         self.visible_sprites.update()
+        self.visible_sprites.enemy_update(self.player)
 
     def createAttack(self):
         self.current_attack = Weapon(self.player, [self.visible_sprites])
@@ -38,8 +40,7 @@ class World():
         
     def createWorld(self):
         layout = {
-            "boundary" : get_boundary("assets\\map\\tmx\\"+self.map_name+".tmx")
-                  }
+            "boundary" : get_boundary("assets\\map\\tmx\\"+self.map_name+".tmx")}
         for style, layer in layout.items():
             for row_index, row in enumerate(layer):
                 for col_index, tile_id in enumerate(row):
@@ -51,7 +52,19 @@ class World():
                             
 
         self.player = Player((WIDTH / 2, HEIGHT / 2), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
-        
+        self.spawnEnemy(5)
+
+    def spawnEnemy(self, numberOfEnemy):
+        enemy_list = []
+        for enemy in monster_data.keys():
+            enemy_list.append(enemy)
+
+        gap = 100
+        for _ in range(numberOfEnemy):
+            positions = [[random.randint(0 + gap, 200), random.randint(800, WIDTH - gap)], [random.randint(0 + gap, 200), random.randint(500, HEIGHT - gap)]]
+            position = [positions[0][random.randint(0, 1)], positions[1][random.randint(0, 1)]]
+            Enemy((enemy_list[random.randint(0, len(enemy_list)-1)]), position, [self.visible_sprites], self.obstacle_sprites)
+       
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):
         
@@ -79,3 +92,8 @@ class YsortCameraGroup(pygame.sprite.Group):
         for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
             offset_position = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_position)
+
+    def enemy_update(self, player):
+        enemy_sprites = [sprite for sprite in self.sprites() if hasattr(sprite, 'sprite_type') and sprite.sprite_type == 'enemy'] 
+        for enemy in enemy_sprites:
+            enemy.enemy_update(player)

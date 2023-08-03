@@ -1,8 +1,9 @@
 import pygame
 from settings import *
 from enum import Enum
+from src.entity import *
 
-class Player(pygame.sprite.Sprite) : 
+class Player(Entity) : 
     def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack):
         super().__init__(groups)
         
@@ -14,8 +15,8 @@ class Player(pygame.sprite.Sprite) :
         self.obstacle_sprites = obstacle_sprites
 
         #movement attributes
-        self.direction = pygame.math.Vector2()
         self.speed = PLAYER_SPEED
+        self.obstacle_sprites = obstacle_sprites
 
         #weapon
         self.create_attack = create_attack
@@ -37,9 +38,6 @@ class Player(pygame.sprite.Sprite) :
         
         #graphic setup
         self.import_player_assets()
-        self.status = 'down_idle'
-        self.frame_index = 0
-        self.animation_speed = 0.1
         
         #controller
         self.joysticks = []
@@ -92,16 +90,6 @@ class Player(pygame.sprite.Sprite) :
                     self.status = self.status.replace('attack', 'walk')
                 else:
                     self.status = self.status + '_walk'
-              
-    def animate(self):
-        animation = self.animations[self.status]
-
-        self.frame_index +=self.animation_speed
-        if self.frame_index >= len(animation):
-            self.frame_index = 0
-
-        self.image = animation[int(self.frame_index)]
-        self.rect = self.image.get_rect(center = self.hitbox.center)
         
     def input(self):
         if not self.attacking:
@@ -175,33 +163,6 @@ class Player(pygame.sprite.Sprite) :
             self.attacking = True
             self.attack_time = pygame.time.get_ticks()
             self.create_attack()
-      
-    def move(self):
-        if self.direction.magnitude() != 0:
-            self.direction = self.direction.normalize()
-        self.hitbox.x += self.direction.x * self.speed
-        self.collision('horizontal')
-        self.hitbox.y += self.direction.y * self.speed
-        self.collision('vertical')
-        
-        self.rect.center = self.hitbox.center
-        
-    def collision(self, direction):
-        if direction == 'horizontal':
-            for i, sprite in enumerate(self.obstacle_sprites):
-                if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.x > 0:
-                        self.hitbox.right = sprite.hitbox.left
-                    elif self.direction.x < 0:
-                        self.hitbox.left = sprite.hitbox.right
-                    print(i)
-        if direction == 'vertical':
-            for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.y > 0:
-                        self.hitbox.bottom = sprite.hitbox.top
-                    elif self.direction.y < 0:
-                        self.hitbox.top = sprite.hitbox.bottom
 
     def cooldowns(self):
         current_time = pygame.time.get_ticks()
@@ -221,16 +182,3 @@ class Player(pygame.sprite.Sprite) :
         self.get_status()
         self.animate()
         self.move()
-
-class SpriteSheet():
-    def __init__(self, image):
-        self.sheet = image.convert_alpha()
-
-    def get_image(self, x, y, width, height):
-        image = pygame.Surface((width, height)).convert_alpha()
-        image.blit(self.sheet, (0, 0), (x, y, width, height))
-        image = pygame.transform.scale(image, (width * 4, height * 4))
-        image.set_colorkey('black')
-        image.convert()
-
-        return image
