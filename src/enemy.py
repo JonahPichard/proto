@@ -47,8 +47,7 @@ class Enemy(Entity):
         self.invicilibilty_duration = 300
 
     def import_graphics(self, name):
-        self.animations = { 'down_idle' : [], 'up_idle' : [], 'left_idle' : [], 'right_idle' : [],
-                            'down_hit' : [], 'up_hit' : [], 'left_hit' : [], 'right_hit' : []}
+        self.animations = { 'down_idle' : [], 'up_idle' : [], 'left_idle' : [], 'right_idle' : []}
         enemy_path = f'assets/monster/{name}'
         for animation in self.animations.keys():
             row = 0
