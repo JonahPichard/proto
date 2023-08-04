@@ -11,7 +11,8 @@ class Player(Entity) :
         spritesheet_sprite = SpriteSheet(spritesheet_image)
         self.image = spritesheet_sprite.get_image(0, 0, 16, 16)
         self.rect = self.image.get_rect(topleft = position)
-        self.hitbox = self.rect.inflate(0, -10)
+        hb_y_size_reduc = 10
+        self.hitbox = self.rect.inflate(0,-hb_y_size_reduc*GAME_UPSCALE).move(0,hb_y_size_reduc/2*GAME_UPSCALE)
         self.obstacle_sprites = obstacle_sprites
 
         #stats
