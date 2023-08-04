@@ -15,7 +15,7 @@ class Player(Entity) :
         hb_y_size_reduc = 10
         self.hitbox = self.rect.inflate(0,-hb_y_size_reduc*GAME_UPSCALE).move(0,hb_y_size_reduc/2*GAME_UPSCALE)
         self.obstacle_sprites = obstacle_sprites
-        print(self.hitbox==self.rect)
+
         #movement attributes
         self.speed = PLAYER_SPEED
         self.obstacle_sprites = obstacle_sprites
@@ -184,7 +184,3 @@ class Player(Entity) :
         self.get_status()
         self.animate()
         self.move()
-        debug(self.hitbox.size)
-        debug(self.hitbox.center,30)
-        debug(self.rect.size, 100)
-        debug(self.rect.center, 120)
