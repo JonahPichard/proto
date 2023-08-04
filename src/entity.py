@@ -1,5 +1,7 @@
 import pygame
 from math import sin
+from settings import *
+
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups):
@@ -16,9 +18,9 @@ class Entity(pygame.sprite.Sprite):
     def move(self, speed):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
-        self.hitbox.x += self.direction.x * speed
+        self.hitbox.x += self.direction.x * speed * GAME_UPSCALE
         self.collision('horizontal')
-        self.hitbox.y += self.direction.y * speed
+        self.hitbox.y += self.direction.y * speed * GAME_UPSCALE
         self.collision('vertical')
         
         self.rect.midbottom = self.hitbox.midbottom
@@ -69,7 +71,7 @@ class SpriteSheet():
     def get_image(self, x, y, width, height):
         image = pygame.Surface((width, height)).convert_alpha()
         image.blit(self.sheet, (0, 0), (x, y, width, height))
-        image = pygame.transform.scale(image, (width * 4, height * 4))
+        image = pygame.transform.scale(image, (width * GAME_UPSCALE, height * GAME_UPSCALE))
         image.set_colorkey('black')
         image.convert()
 

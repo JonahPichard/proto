@@ -25,7 +25,7 @@ HEALTH_COLOR = 'red'
 UI_BORDER_COLOR_ACTIVE = 'gold'
 
 # Player
-player_data = {'health': 100, 'damage' : 5, 'speed': 5}
+player_data = {'health': 100, 'damage' : 5, 'speed': 1.5}
 PLAYER_SIZE = 16
 PLAYER_ATTACK_COOLDOWN = 300
 PLAYER_SWITCH_WEAPON_COOLDOWN = 500
