@@ -39,15 +39,21 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         sys.exit()
+                    elif event.key == pygame.K_m : 
+                        self.world.spawnEnemy(5)
                 elif event.type == pygame.JOYDEVICEADDED:
                     joy = pygame.joystick.Joystick(event.device_index)
                     self.world.player.joysticks.append(joy)
                     print("Controller connected, keyboard don't work ")
                 elif event.type == pygame.MOUSEWHEEL:
                     self.world.player.switch_weapon()
-                    
+
+            debug(f"FPS : {int(self.clock.get_fps())}", x=self.screen.get_width() - 100)
+
             pygame.display.update()
             self.clock.tick(FPS)
+
+            
             
             
 

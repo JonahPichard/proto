@@ -1,5 +1,5 @@
 import pygame
-from settings import *
+from math import sin
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups):
@@ -13,19 +13,17 @@ class Entity(pygame.sprite.Sprite):
         self.status = 'down_idle'
         self.animation_speed = 0.15
         
-    def move(self):
+    def move(self, speed):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
-        self.hitbox.x += self.direction.x * self.speed
+        self.hitbox.x += self.direction.x * speed
         self.collision('horizontal')
-        self.hitbox.y += self.direction.y * self.speed
+        self.hitbox.y += self.direction.y * speed
         self.collision('vertical')
         
         self.rect.center = self.hitbox.center
         
     def collision(self, direction):
-        # TODO enemy collision
-        # TODO Hitbox du player doit seulement etre  sur ces pied
         if direction == 'horizontal':
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
@@ -51,6 +49,19 @@ class Entity(pygame.sprite.Sprite):
         self.image = animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center = self.hitbox.center)
 
+        if not self.vulnerable:
+            alpha = self.wave_value()
+            self.image.set_alpha(alpha)
+        else:
+            self.image.set_alpha(255)
+
+    def wave_value(self):
+        value = sin(pygame.time.get_ticks())
+        if value >= 0:
+            return 255
+        else :
+            return 0
+            
 class SpriteSheet():
     def __init__(self, image):
         self.sheet = image.convert_alpha()
@@ -58,7 +69,7 @@ class SpriteSheet():
     def get_image(self, x, y, width, height):
         image = pygame.Surface((width, height)).convert_alpha()
         image.blit(self.sheet, (0, 0), (x, y, width, height))
-        image = pygame.transform.scale(image, (width * GAME_UPSCALE, height * GAME_UPSCALE))
+        image = pygame.transform.scale(image, (width * 4, height * 4))
         image.set_colorkey('black')
         image.convert()
 
