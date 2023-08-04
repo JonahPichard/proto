@@ -11,4 +11,8 @@ Changement de branche
 Création d'une branche
 `git branch <nom_de_la_branche>`
 
+liste des branches
+`git branch`
 
+Supprimer une branche
+`git branch -d <nom_de_la_branche>`

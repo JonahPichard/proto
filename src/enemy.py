@@ -71,7 +71,6 @@ class Enemy(Entity):
 
     def get_status(self, player):
         distance =  self.get_player_distance_and_direction(player)[0]
-        debug(distance)
         if distance <= self.attack_radius:
             self.state = 'attack'
         elif distance <= self.notice_radius:
