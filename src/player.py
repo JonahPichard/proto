@@ -2,7 +2,7 @@ import pygame
 from settings import *
 from enum import Enum
 from src.entity import *
-
+from debug import debug
 
 class Player(Entity) : 
     def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack):
@@ -12,9 +12,10 @@ class Player(Entity) :
         spritesheet_sprite = SpriteSheet(spritesheet_image)
         self.image = spritesheet_sprite.get_image(0, 0, 16, 16)
         self.rect = self.image.get_rect(topleft = position)
-        self.hitbox = self.rect.inflate(0, 0).move(0,0)
+        hb_y_size_reduc = 10
+        self.hitbox = self.rect.inflate(0,-hb_y_size_reduc*GAME_UPSCALE).move(0,hb_y_size_reduc/2*GAME_UPSCALE)
         self.obstacle_sprites = obstacle_sprites
-
+        print(self.hitbox==self.rect)
         #movement attributes
         self.speed = PLAYER_SPEED
         self.obstacle_sprites = obstacle_sprites
@@ -183,3 +184,7 @@ class Player(Entity) :
         self.get_status()
         self.animate()
         self.move()
+        debug(self.hitbox.size)
+        debug(self.hitbox.center,30)
+        debug(self.rect.size, 100)
+        debug(self.rect.center, 120)

@@ -21,7 +21,7 @@ class Entity(pygame.sprite.Sprite):
         self.hitbox.y += self.direction.y * self.speed
         self.collision('vertical')
         
-        self.rect.center = self.hitbox.center
+        self.rect.midbottom = self.hitbox.midbottom
         
     def collision(self, direction):
         # TODO enemy collision
@@ -49,7 +49,7 @@ class Entity(pygame.sprite.Sprite):
             self.frame_index = 0
 
         self.image = animation[int(self.frame_index)]
-        self.rect = self.image.get_rect(center = self.hitbox.center)
+        # self.rect = self.image.get_rect(center = self.hitbox.center)
 
 class SpriteSheet():
     def __init__(self, image):

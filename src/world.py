@@ -52,9 +52,9 @@ class World():
                         if style == 'boundary':
                             Tile((x,y),[self.obstacle_sprites,self.visible_sprites], 'invisible')
                     if style =='data':
-                        if tile_id == 21 :
+                        if tile_id == 11 :
                             player_spawn.append([x, y])
-                        if tile_id == 22 :
+                        if tile_id == 21 :
                             self.mob_spawn.append([x, y])
         if len(player_spawn) == 0 :
             player_spawn.append([WIDTH/2, HEIGHT/2])
