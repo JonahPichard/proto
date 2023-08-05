@@ -103,7 +103,6 @@ class Player(Entity) :
         if not self.attacking:
             keys = pygame.key.get_pressed()
             mouses = pygame.mouse.get_pressed()
-            
             #movement input
             if keys[pygame.K_z]:
                 self.direction.y =-1

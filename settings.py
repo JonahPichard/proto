@@ -37,8 +37,8 @@ weapons_data = {
 
 #Enemys
 monster_data = {
-    'skull' : {'health' : 20,    'damage' : 5, 'gold_amount': 1, 'attack_type' : 'slash', 'attack_sound' : None, 'speed' : 5, 'resistance' : 3, 'attack_radius': 20, 'notice_radius': 360},
-    'cyclope' : {'health' : 100, 'damage' : 15, 'gold_amount': 5, 'attack_type' : 'claw',  'attack_sound' : None, 'speed' : 3, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 360}}
+    'skull' : {'health' : 20,    'damage' : 5, 'gold_amount': 1, 'attack_type' : 'slash', 'attack_sound' : None, 'speed' : 2, 'resistance' : 3, 'attack_radius': 20, 'notice_radius': 360},
+    'cyclope' : {'health' : 100, 'damage' : 15, 'gold_amount': 5, 'attack_type' : 'claw',  'attack_sound' : None, 'speed' : 1.3, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 360}}
 
 # MAP
 EMPTY_MAP = "map_empty_80_45"
