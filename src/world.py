@@ -84,7 +84,7 @@ class World():
             enemy_list.append(enemy)
         for _ in range(numberOfEnemy):
             position = random.choice(self.mob_spawn)
-            enemy = Enemy(  (self.enemy_list[random.randint(0, len(self.enemy_list)-1)]),
+            enemy = Enemy(  (enemy_list[random.randint(0, len(enemy_list)-1)]),
                             position,
                             [self.visible_sprites, self.attackable_sprites],
                             self.obstacle_sprites, self.damage_player)
