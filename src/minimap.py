@@ -11,7 +11,6 @@ class Minimap(pygame.sprite.Sprite):
         self.rect = self.surface.get_rect()
         self.screen = screen
         self.raw_image = Image.open("assets\map\png\map_empty_80_45.png").resize((self.surface.get_width(), self.surface.get_height()), Image.ANTIALIAS)
-        print(self.raw_image.height, self.raw_image.height)
         self.raw_image.putalpha(210)
         self.raw_image.save("assets\map\png\minimap.png")
         self.raw_image = pygame.image.load("assets\map\png\minimap.png")
