@@ -38,7 +38,7 @@ class World():
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
         self.player_attack_logic()
-        self.ui.display(self.player)
+        self.ui.display(self.player, self.spawned_enemy)
 
     def createAttack(self):
         self.current_attack = Weapon(self.player, [self.visible_sprites, self.attack_sprites])
@@ -78,15 +78,17 @@ class World():
 
     def spawnEnemy(self, numberOfEnemy):
         enemy_list = []
+        self.spawned_enemy = []
         gap = 100
         for enemy in monster_data.keys():
             enemy_list.append(enemy)
         for _ in range(numberOfEnemy):
             position = random.choice(self.mob_spawn)
-            Enemy(  (enemy_list[random.randint(0, len(enemy_list)-1)]),
-                    position,
-                    [self.visible_sprites, self.attackable_sprites],
-                    self.obstacle_sprites, self.damage_player)
+            enemy = Enemy(  (self.enemy_list[random.randint(0, len(self.enemy_list)-1)]),
+                            position,
+                            [self.visible_sprites, self.attackable_sprites],
+                            self.obstacle_sprites, self.damage_player)
+            self.spawned_enemy.append(enemy)
 
     def player_attack_logic(self):
         if self.attack_sprites:

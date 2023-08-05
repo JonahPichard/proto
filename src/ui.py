@@ -1,5 +1,7 @@
 import pygame
 from settings import *
+from src.minimap import Minimap
+
 
 class UI:
     def __init__(self):
@@ -7,6 +9,7 @@ class UI:
         #general setup
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(UI_FONT, UI_FONT_SIZE)
+        self.minimap = Minimap(self.display_surface)
 
         #convert weapon dictionnary
         self.weapon_graphics = []
@@ -79,9 +82,10 @@ class UI:
 
         self.display_surface.blit(weapon_surf, weapon_rect)
 
-    def display(self, player):
+    def display(self, player, spawned_enemy):
         self.show_health(player.health, player.stats['health'])
         self.show_gold(player.gold)
         self.weapon_overlay(player.weapon_index,  not player.can_switch_weapon)
+        self.minimap.update(player, spawned_enemy)
         
         
