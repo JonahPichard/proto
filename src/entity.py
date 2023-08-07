@@ -57,6 +57,9 @@ class Entity(pygame.sprite.Sprite):
         else:
             self.image.set_alpha(255)
 
+    def interact(self):
+        pass
+
     def wave_value(self):
         value = sin(pygame.time.get_ticks())
         if value >= 0:

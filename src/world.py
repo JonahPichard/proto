@@ -7,7 +7,7 @@ from src.player import Player
 from src.weapon import Weapon
 from src.enemy import Enemy
 from src.house import House
-from src.toolbox.import_world import get_info_map
+from src.toolbox.import_world import get_info_map, distance
 from src.ui import UI
 
 class World():
@@ -21,6 +21,7 @@ class World():
         self.obstacle_sprites = pygame.sprite.Group()
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
+        self.interact_sprite = pygame.sprite.Group()
 
         # mob spawn zone 
         self.mob_spawn = []
@@ -81,7 +82,7 @@ class World():
             print(f'INFO - Pas de tile de spawnde la maison dans {self.map_name}')
         
         self.player = Player((random.choice(player_spawn)), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
-        self.house = House((random.choice(house_spawn)), [self.visible_sprites, self.obstacle_sprites])
+        self.house = House((random.choice(house_spawn)), [self.visible_sprites, self.obstacle_sprites, self.interact_sprite])
         self.spawnEnemy(0)
 
     def spawnEnemy(self, numberOfEnemy):
@@ -112,6 +113,25 @@ class World():
             self.player.health -= damage_ammount
             self.player.vulnerable = False
             self.player.hit_time = pygame.time.get_ticks()
+        
+    def entity_interact(self):
+        #distance calculer centre a centre entre deux rect (pas bien quand des rect de taille differente)
+        closest_sprite = None
+        sprite_distance = None
+        for sprite in self.interact_sprite:
+            close_sprite = pygame.sprite.collide_rect_ratio(1.2)(self.player, sprite)
+            sprite_distance = distance(self.player.rect.center, sprite.rect.center)
+            if close_sprite:
+                if closest_sprite == None:
+                    closest_sprite_distance = sprite_distance
+                    closest_sprite = sprite
+                elif closest_sprite_distance > sprite_distance :
+                    closest_sprite_distance = sprite_distance
+                    closest_sprite = sprite
+
+        if closest_sprite == None:
+            return
+        closest_sprite.interact()
 
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):

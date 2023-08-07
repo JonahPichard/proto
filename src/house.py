@@ -21,6 +21,7 @@ class House(Entity):
         #stats
         self.health = house_data['health']
         
-
+    def interact(self):
+        print("J'ai toucher la maison")
 
 
