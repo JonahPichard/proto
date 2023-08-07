@@ -1,1 +1,2 @@
 collision.tmx
+house.tmx

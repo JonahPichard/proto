@@ -6,6 +6,7 @@ from debug import debug
 from src.player import Player
 from src.weapon import Weapon
 from src.enemy import Enemy
+from src.house import House
 from src.toolbox.import_world import get_info_map
 from src.ui import UI
 
@@ -50,6 +51,7 @@ class World():
         
     def createWorld(self):
         player_spawn = []
+        house_spawn = []
         layout = get_info_map(self.map_name)
         for style, layer in layout.items():
             for row_index, row in enumerate(layer):
@@ -59,12 +61,14 @@ class World():
                     if tile_id != 0 :
                         if style == 'boundary':
                             Tile((x,y),[self.obstacle_sprites], 'invisible')
-                        if style =='data':
-                            if tile_id == 11 :
+                        if style =='entity':
+                            if tile_id == 50 :
                                 player_spawn.append([x, y])
-                            if tile_id == 22 :
+                            if tile_id == 48 :
                                 self.mob_spawn.append([x, y])
-        
+                            if tile_id == 49 :
+                                house_spawn.append([x, y])
+        # TODO faire une fonction pour chech if empty
         if len(player_spawn) == 0 :
             player_spawn.append([WIDTH/2, HEIGHT/2])
             # TODO ficher de log
@@ -72,9 +76,13 @@ class World():
         if len(self.mob_spawn) == 0 :
             self.mob_spawn.append([WIDTH/2, HEIGHT/2])
             print(f'INFO - Pas de tile de spawn des ennemies dans {self.map_name}')
+        if len(house_spawn) == 0 :
+            house_spawn.append([WIDTH/2, HEIGHT/2])
+            print(f'INFO - Pas de tile de spawnde la maison dans {self.map_name}')
         
         self.player = Player((random.choice(player_spawn)), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
-        self.spawnEnemy(10)
+        self.house = House((random.choice(house_spawn)), [self.visible_sprites, self.obstacle_sprites])
+        self.spawnEnemy(0)
 
     def spawnEnemy(self, numberOfEnemy):
         enemy_list = []

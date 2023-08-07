@@ -13,7 +13,6 @@ class Player(Entity) :
         self.rect = self.image.get_rect(topleft = position)
         hb_y_size_reduc = 10
         self.hitbox = self.rect.inflate(0,-hb_y_size_reduc*GAME_UPSCALE).move(0,hb_y_size_reduc/2*GAME_UPSCALE)
-        self.obstacle_sprites = obstacle_sprites
 
         #stats
         self.stats = player_data

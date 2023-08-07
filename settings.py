@@ -4,6 +4,7 @@ FPS = 60
 
 TILE_SIZE = 16
 GAME_UPSCALE = 4
+
 #UI
 BAR_HEIGHT = 20
 HEALTH_BAR_WIDTH = 200
@@ -35,10 +36,17 @@ weapons_data = {
     'sword' : {'cooldown' : 100, 'damage' : 10, 'graphic' : 'assets/weapon/sword/full.png'},
     'axe' : {'cooldown' : 200, 'damage' : 5, 'graphic' : 'assets/weapon/axe/full.png'}}
 
-#Enemys
+# Enemys
 monster_data = {
     'skull' : {'health' : 20,    'damage' : 5, 'gold_amount': 1, 'attack_type' : 'slash', 'attack_sound' : None, 'speed' : 5, 'resistance' : 3, 'attack_radius': 20, 'notice_radius': 360},
     'cyclope' : {'health' : 100, 'damage' : 15, 'gold_amount': 5, 'attack_type' : 'claw',  'attack_sound' : None, 'speed' : 3, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 360}}
+
+# House
+house_data = {
+    'health': 1000,
+    'graphic' : { 'asset' : 'assets\entity\maison.png', 'width' : 80, 'height' : 80}
+}
+
 
 # MAP
 EMPTY_MAP = "map_empty_80_45"
