@@ -12,11 +12,16 @@ class Player(Entity) :
         spritesheet_sprite = SpriteSheet(spritesheet_image)
         self.image = spritesheet_sprite.get_image(0, 0, 16, 16)
         self.rect = self.image.get_rect(topleft = position)
-        self.hitbox = self.rect.inflate(0, -10)
-        self.obstacle_sprites = obstacle_sprites
+        hb_y_size_reduc = 10
+        self.hitbox = self.rect.inflate(0,-hb_y_size_reduc*GAME_UPSCALE).move(0,hb_y_size_reduc/2*GAME_UPSCALE)
+
+        #stats
+        self.stats = player_data
+        self.health = self.stats['health']
+        self.gold = 0
 
         #movement attributes
-        self.speed = PLAYER_SPEED
+        self.speed = self.stats['speed']
         self.obstacle_sprites = obstacle_sprites
         self.visible_sprites = visible_sprites
 
@@ -38,17 +43,19 @@ class Player(Entity) :
         self.attack_time = None
         self.attack_cooldown = PLAYER_ATTACK_COOLDOWN
         self.attacking = False
-        self.attack_point = PLAYER_ATTACK_POINTS
+        self.damage = self.stats['damage']
            
-        #health attributes
-        self.health_point = PLAYER_HEALTH_POINTS
-        
         #graphic setup
         self.import_player_assets()
         
         #controller
         self.joysticks = []
         self.deadzone = 0.4
+
+        #get damage attributes
+        self.vulnerable = True
+        self.hit_time = None
+        self.invicilibilty_duration = 500
     
     def import_player_assets(self):
         character_path = 'assets/player'
@@ -199,6 +206,11 @@ class Player(Entity) :
             self.weapon_index = (self.weapon_index + 1) % len(list(weapons_data))
             self.weapon = list(weapons_data.keys())[self.weapon_index]
     
+    def get_full_weapon_damage(self):
+        base_damage = self.damage
+        weapon_damage = weapons_data[self.weapon]['damage']
+        return base_damage + weapon_damage
+
     def attack(self):
         if not self.attacking:
             self.attacking = True
@@ -215,13 +227,17 @@ class Player(Entity) :
         current_time = pygame.time.get_ticks()
         
         if self.attacking:
-            if current_time - self.attack_time >= self.attack_cooldown:
+            if current_time - self.attack_time >= self.attack_cooldown + weapons_data[self.weapon]['cooldown']:
                 self.attacking = False
                 self.destory_attack()
                 
         if not self.can_switch_weapon : 
             if current_time - self.weapon_switch_time >= self.swicth_weapon_cooldown:
                 self.can_switch_weapon = True
+
+        if not self.vulnerable:
+             if current_time - self.hit_time >= self.invicilibilty_duration:
+                self.vulnerable = True
                 
     def update(self):
         self.input()
@@ -229,6 +245,4 @@ class Player(Entity) :
         self.cooldownBuildings()
         self.get_status()
         self.animate()
-        self.move()
-        
-   
+        self.move(self.speed)

@@ -13,3 +13,8 @@ Création d'une branche
 
 Mettre à jour les fichiers
 `git pull `
+liste des branches
+`git branch`
+
+Supprimer une branche
+`git branch -d <nom_de_la_branche>`

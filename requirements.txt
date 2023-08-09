@@ -1,2 +1,7 @@
-pygame
-pytwx
+#Package to execute the game
+# pip install -r requirements.txt
+
+
+Pillow==10.0.0
+pygame==2.5.0
+PyTMX==3.32

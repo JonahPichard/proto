@@ -1,4 +1,7 @@
 import pygame
+from math import sin
+from settings import *
+
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups):
@@ -12,15 +15,15 @@ class Entity(pygame.sprite.Sprite):
         self.status = 'down_idle'
         self.animation_speed = 0.15
         
-    def move(self):
+    def move(self, speed):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
-        self.hitbox.x += self.direction.x * self.speed
+        self.hitbox.x += self.direction.x * speed * GAME_UPSCALE
         self.collision('horizontal')
-        self.hitbox.y += self.direction.y * self.speed
+        self.hitbox.y += self.direction.y * speed * GAME_UPSCALE
         self.collision('vertical')
         
-        self.rect.center = self.hitbox.center
+        self.rect.midbottom = self.hitbox.midbottom
         
     def collision(self, direction):
         if direction == 'horizontal':
@@ -46,8 +49,24 @@ class Entity(pygame.sprite.Sprite):
             self.frame_index = 0
 
         self.image = animation[int(self.frame_index)]
-        self.rect = self.image.get_rect(center = self.hitbox.center)
+        # self.rect = self.image.get_rect(center = self.hitbox.center)
 
+        if not self.vulnerable:
+            alpha = self.wave_value()
+            self.image.set_alpha(alpha)
+        else:
+            self.image.set_alpha(255)
+
+    def interact(self):
+        pass
+
+    def wave_value(self):
+        value = sin(pygame.time.get_ticks())
+        if value >= 0:
+            return 255
+        else :
+            return 0
+            
 class SpriteSheet():
     def __init__(self, image):
         self.sheet = image.convert_alpha()
@@ -55,7 +74,7 @@ class SpriteSheet():
     def get_image(self, x, y, width, height):
         image = pygame.Surface((width, height)).convert_alpha()
         image.blit(self.sheet, (0, 0), (x, y, width, height))
-        image = pygame.transform.scale(image, (width * 4, height * 4))
+        image = pygame.transform.scale(image, (width * GAME_UPSCALE, height * GAME_UPSCALE))
         image.set_colorkey('black')
         image.convert()
 
