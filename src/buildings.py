@@ -18,7 +18,6 @@ class Buildings(Entity):
         self.monster_name = monster_name
         monster_info = monster_data[self.monster_name]
         self.health_points = monster_info['health']
-        self.exp = monster_info['exp']
         self.speed = monster_info['speed']
         self.attack_damage = monster_info['damage']
         self.resistance = monster_info['resistance']

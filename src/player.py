@@ -5,9 +5,10 @@ from src.entity import *
 from src.buildings import Buildings
 
 class Player(Entity) : 
-    def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack,visible_sprites):
+    def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack):
         super().__init__(groups)
-        
+        self.group = groups + [obstacle_sprites]
+                
         spritesheet_image = pygame.image.load('assets/player/idle.png').convert_alpha()
         spritesheet_sprite = SpriteSheet(spritesheet_image)
         self.image = spritesheet_sprite.get_image(0, 0, 16, 16)
@@ -23,7 +24,7 @@ class Player(Entity) :
         #movement attributes
         self.speed = self.stats['speed']
         self.obstacle_sprites = obstacle_sprites
-        self.visible_sprites = visible_sprites
+        #self.visible_sprites = visible_sprites
 
         #weapon
         self.create_attack = create_attack
@@ -149,7 +150,7 @@ class Player(Entity) :
                                 taledbuildx = (self.hitbox.x // TILE_SIZE) * TILE_SIZE
                                 taledbuildy = (self.hitbox.y // TILE_SIZE) * TILE_SIZE
                                 position = [(dirx*TILE_SIZE_BUILDINGS) + taledbuildx , (diry*TILE_SIZE_BUILDINGS) + taledbuildy]
-                                Buildings((building_list[random.randint(0, len(building_list)-1)]), position, [self.visible_sprites], self.obstacle_sprites)
+                                Buildings((building_list[random.randint(0, len(building_list)-1)]), position, self.group, self.obstacle_sprites)
                                 
 
             
