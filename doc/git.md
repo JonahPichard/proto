@@ -11,4 +11,5 @@ Changement de branche
 Création d'une branche
 `git branch <nom_de_la_branche>`
 
-
+Mettre à jour les fichiers
+`git pull `

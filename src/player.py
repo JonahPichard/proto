@@ -1,10 +1,11 @@
-import pygame
+import pygame,random
 from settings import *
 from enum import Enum
 from src.entity import *
+from src.buildings import Buildings
 
 class Player(Entity) : 
-    def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack):
+    def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack,visible_sprites):
         super().__init__(groups)
         
         spritesheet_image = pygame.image.load('assets/player/idle.png').convert_alpha()
@@ -17,6 +18,7 @@ class Player(Entity) :
         #movement attributes
         self.speed = PLAYER_SPEED
         self.obstacle_sprites = obstacle_sprites
+        self.visible_sprites = visible_sprites
 
         #weapon
         self.create_attack = create_attack
@@ -26,6 +28,11 @@ class Player(Entity) :
         self.can_switch_weapon = True
         self.weapon_switch_time = None
         self.swicth_weapon_cooldown = PLAYER_SWITCH_WEAPON_COOLDOWN
+
+        #building
+        self.build_cooldown = BUILD_COOLDOWN
+        self.can_build = True
+        self.start_build_time = 0
 
         #Attack attributes
         self.attack_time = None
@@ -117,7 +124,27 @@ class Player(Entity) :
                 
             #attack input
             if mouses[0]:
-                self.attack()
+                if self.weapon_index == 0:
+                    self.attack()
+            #création d'un bâtiment si attaque au marteau
+                if (self.weapon_index == 1):
+                    if (self.direction.x == 0 and self.direction.y == 0):
+                        if (self.can_build == 1):
+                            self.can_build == 0
+                            self.start_build_time = pygame.time.get_ticks()
+                            building_list = []
+                            for building in monster_data.keys():
+                                building_list.append(building)
+                            gap = 100
+                            for _ in range(2):
+                                dirx , diry = self.convStatusToDirection()
+                                #réduction des coordonnés en cases et reconversion en coordonnés
+                                taledbuildx = (self.hitbox.x // TILE_SIZE) * TILE_SIZE
+                                taledbuildy = (self.hitbox.y // TILE_SIZE) * TILE_SIZE
+                                position = [(dirx*TILE_SIZE_BUILDINGS) + taledbuildx , (diry*TILE_SIZE_BUILDINGS) + taledbuildy]
+                                Buildings((building_list[random.randint(0, len(building_list)-1)]), position, [self.visible_sprites], self.obstacle_sprites)
+                                
+
             
             '''
             Joystick
@@ -150,7 +177,21 @@ class Player(Entity) :
                 # swicth_weapon
                 elif joystick.get_button(3):
                     self.switch_weapon()
-                    
+
+
+    def convStatusToDirection(self):
+        dirx, diry = 0 , 0
+        if (self.status == 'right_idle'):
+            dirx = 1
+        if (self.status == 'left_idle'):
+            dirx = -1
+        if (self.status == 'up_idle'):
+            diry = -1
+        if (self.status == 'down_idle'):
+            diry = 1
+        return dirx,diry
+                                      
+
     def switch_weapon(self):
         if self.can_switch_weapon :
             self.can_switch_weapon = False
@@ -163,6 +204,12 @@ class Player(Entity) :
             self.attacking = True
             self.attack_time = pygame.time.get_ticks()
             self.create_attack()
+
+    def cooldownBuildings(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.start_build_time >= self.build_cooldown:
+            self.can_build = True
+                
 
     def cooldowns(self):
         current_time = pygame.time.get_ticks()
@@ -179,6 +226,9 @@ class Player(Entity) :
     def update(self):
         self.input()
         self.cooldowns()
+        self.cooldownBuildings()
         self.get_status()
         self.animate()
         self.move()
+        
+   

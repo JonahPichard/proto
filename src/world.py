@@ -7,6 +7,7 @@ from src.player import Player
 from src.weapon import Weapon
 from src.enemy import Enemy
 from src.toolbox.import_world import get_info_map
+from src.buildings import Buildings
 
 class World():
     def __init__(self):
@@ -25,21 +26,26 @@ class World():
 
         #sprite setup
         self.createWorld()
+
         
     def run(self):
         #update and draw the game
         self.visible_sprites.draw(self.player)
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
+        #self.visible_sprites.buildings_update(self.player) A ajouter si animations ect.. sur les batiments
 
     def createAttack(self):
         self.current_attack = Weapon(self.player, [self.visible_sprites])
+
 
     def destory_attack(self):
         if self.current_attack:
             self.current_attack.kill()
         self.current_attack = None
         
+
+
     def createWorld(self):
         player_spawn = []
         layout = get_info_map(self.map_name)
@@ -64,8 +70,9 @@ class World():
             self.mob_spawn.append([WIDTH/2, HEIGHT/2])
             print(f'INFO - Pas de tile de spawn des ennemies dans {self.map_name}')
         
-        self.player = Player((random.choice(player_spawn)), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
+        self.player = Player((random.choice(player_spawn)), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack,self.visible_sprites)   
         self.spawnEnemy(5)
+        
 
     def spawnEnemy(self, numberOfEnemy):
         enemy_list = []
@@ -111,3 +118,9 @@ class YsortCameraGroup(pygame.sprite.Group):
         enemy_sprites = [sprite for sprite in self.sprites() if hasattr(sprite, 'sprite_type') and sprite.sprite_type == 'enemy'] 
         for enemy in enemy_sprites:
             enemy.enemy_update(player)
+
+    def buildings_update(self, player):
+        buildings_sprites = [sprite for sprite in self.sprites() if hasattr(sprite, 'sprite_type') and sprite.sprite_type == 'building'] 
+#A ajouter si ajout d'animations ect..
+        # for buildings in buildings_sprites:
+        #     buildings.buildings_update(player)
