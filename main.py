@@ -1,4 +1,7 @@
-import pygame, sys
+import sys, cProfile
+
+import pygame
+
 from settings import *
 from debug import debug
 from src.world import World
@@ -58,4 +61,6 @@ class Game:
 
 if __name__ == '__main__':
     game = Game()
+    # cProfile.run("game.run()")
     game.run()
+    

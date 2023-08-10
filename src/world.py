@@ -1,4 +1,7 @@
-import pygame, random
+import random
+from enum import Enum
+
+import pygame
 from settings import *
 from src.tile import Tile
 from debug import debug
@@ -9,6 +12,7 @@ from src.enemy import Enemy
 from src.house import House
 from src.toolbox.import_world import get_info_map, distance
 from src.ui import UI
+from src.clock import Clock
 
 class World():
     def __init__(self):
@@ -22,6 +26,7 @@ class World():
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
         self.interact_sprite = pygame.sprite.Group()
+        self.light_source_sprite = pygame.sprite.Group()
 
         # mob spawn zone 
         self.mob_spawn = []
@@ -30,6 +35,7 @@ class World():
 
         #sprite setup
         self.createWorld()
+        self.daycycle = Clock()
 
         #user interface
         self.ui = UI()
@@ -40,7 +46,9 @@ class World():
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
         self.player_attack_logic()
+        self.daycycle.draw()
         self.ui.display(self.player, self.spawned_enemy)
+
 
     def createAttack(self):
         self.current_attack = Weapon(self.player, [self.visible_sprites, self.attack_sprites])
@@ -132,6 +140,14 @@ class World():
         if closest_sprite == None:
             return
         closest_sprite.interact()
+
+    def post_processing(self):
+        filtre = pygame.Surface([WIDTH, HEIGHT], pygame.SRCALPHA, 32)
+        filtre = filtre.convert_alpha()
+        if self.clock.state == 'NIGHT':
+            filtre.fill((0,0,10,230))
+            self.display_surface.blit(filtre, (0,0))
+        debug(self.clock.time, 0, 40)
 
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):
