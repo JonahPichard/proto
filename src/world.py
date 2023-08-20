@@ -33,12 +33,16 @@ class World():
         #attack sprites
         self.current_attack = None
 
+        #matrix
+        self.matrix = [[1 for _ in range(WIDTH // TILE_SIZE)] for _ in range(HEIGHT // TILE_SIZE)]
+
         #sprite setup
         self.createWorld()
         self.daycycle = Clock()
 
         #user interface
         self.ui = UI()
+
         
     def run(self):
         #update and draw the game
@@ -70,6 +74,9 @@ class World():
                     if tile_id != 0 :
                         if style == 'boundary':
                             Tile((x,y),[self.obstacle_sprites], 'invisible')
+                            self.matrix[row_index][col_index] = 0
+                        else:
+                            self.matrix[row_index][col_index] = 1
                         if style =='entity':
                             if tile_id == 50 :
                                 player_spawn.append([x, y])
@@ -103,6 +110,7 @@ class World():
             position = random.choice(self.mob_spawn)
             enemy = Enemy(  (enemy_list[random.randint(0, len(enemy_list)-1)]),
                             position,
+                            self.matrix,
                             [self.visible_sprites, self.attackable_sprites],
                             self.obstacle_sprites, self.damage_player)
             self.spawned_enemy.append(enemy)

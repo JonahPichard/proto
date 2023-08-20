@@ -66,6 +66,11 @@ class Entity(pygame.sprite.Sprite):
             return 255
         else :
             return 0
+
+    def get_coord(self):
+        col = self.rect.centerx // TILE_SIZE // GAME_UPSCALE
+        row = self.rect.centery // TILE_SIZE // GAME_UPSCALE
+        return (col,row)
             
 class SpriteSheet():
     def __init__(self, image):

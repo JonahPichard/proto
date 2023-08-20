@@ -38,8 +38,8 @@ weapons_data = {
 
 # Enemys
 monster_data = {
-    'skull' : {'health' : 20,    'damage' : 5, 'gold_amount': 1, 'attack_type' : 'slash', 'attack_sound' : None, 'speed' : 5, 'resistance' : 3, 'attack_radius': 20, 'notice_radius': 360},
-    'cyclope' : {'health' : 100, 'damage' : 15, 'gold_amount': 5, 'attack_type' : 'claw',  'attack_sound' : None, 'speed' : 3, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 360}}
+    'skull' : {'health' : 20,    'damage' : 5, 'gold_amount': 1, 'attack_type' : 'slash', 'attack_sound' : None, 'speed' : 1.4, 'resistance' : 3, 'attack_radius': 20, 'notice_radius': 1500},
+    'cyclope' : {'health' : 100, 'damage' : 15, 'gold_amount': 5, 'attack_type' : 'claw',  'attack_sound' : None, 'speed' : 1, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 1000}}
 
 # House
 house_data = {

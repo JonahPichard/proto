@@ -3,6 +3,8 @@ from settings import *
 from enum import Enum
 from src.entity import *
 
+from debug import debug
+
 class Player(Entity) : 
     def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack):
         super().__init__(groups)
@@ -198,3 +200,5 @@ class Player(Entity) :
         self.get_status()
         self.animate()
         self.move(self.speed)
+
+        x, y = self.rect.centerx // TILE_SIZE // GAME_UPSCALE, self.rect.centery // TILE_SIZE // GAME_UPSCALE
