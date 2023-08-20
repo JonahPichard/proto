@@ -12,10 +12,14 @@ from src.enemy import Enemy
 from src.house import House
 from src.toolbox.import_world import get_info_map, distance
 from src.ui import UI
+from src.particle import AnimationPlayer
+from src.upgrade import Upgrade
 from src.clock import Clock
 
 class World():
     def __init__(self):
+        
+        self.game_paused = False
         # map
         self.map_name = EMPTY_MAP
         # get the display surface
@@ -42,17 +46,25 @@ class World():
 
         #user interface
         self.ui = UI()
-
+        self.upgrade = Upgrade(self.player)
+        
+        #particle
+        self.animation_player = AnimationPlayer()
         
     def run(self):
-        #update and draw the game
         self.visible_sprites.draw(self.player)
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
         self.player_attack_logic()
         self.daycycle.draw()
         self.ui.display(self.player, self.spawned_enemy)
-
+        if self.game_paused:
+            self.upgrade.display()
+        else:
+            #update and draw the game
+            self.visible_sprites.update()
+            self.visible_sprites.enemy_update(self.player)
+            self.player_attack_logic()
 
     def createAttack(self):
         self.current_attack = Weapon(self.player, [self.visible_sprites, self.attack_sprites])
@@ -112,7 +124,9 @@ class World():
                             position,
                             self.matrix,
                             [self.visible_sprites, self.attackable_sprites],
-                            self.obstacle_sprites, self.damage_player)
+                            self.obstacle_sprites,
+                            self.damage_player,
+                            self.trigger_death_particles)
             self.spawned_enemy.append(enemy)
 
     def player_attack_logic(self):
@@ -123,39 +137,14 @@ class World():
                     for target_sprite in collision_sprites:
                         if target_sprite.sprite_type == 'enemy':
                             target_sprite.get_damage(self.player, attack_sprite.sprite_type)
+                            position = target_sprite.rect.center
+                            self.animation_player.create_particle(position, 'slash', [self.visible_sprites])
 
     def damage_player(self, damage_ammount, attack_type):
         if self.player.vulnerable:
             self.player.health -= damage_ammount
             self.player.vulnerable = False
             self.player.hit_time = pygame.time.get_ticks()
-        
-    def entity_interact(self):
-        #distance calculer centre a centre entre deux rect (pas bien quand des rect de taille differente)
-        closest_sprite = None
-        sprite_distance = None
-        for sprite in self.interact_sprite:
-            close_sprite = pygame.sprite.collide_rect_ratio(1.2)(self.player, sprite)
-            sprite_distance = distance(self.player.rect.center, sprite.rect.center)
-            if close_sprite:
-                if closest_sprite == None:
-                    closest_sprite_distance = sprite_distance
-                    closest_sprite = sprite
-                elif closest_sprite_distance > sprite_distance :
-                    closest_sprite_distance = sprite_distance
-                    closest_sprite = sprite
-
-        if closest_sprite == None:
-            return
-        closest_sprite.interact()
-
-    def post_processing(self):
-        filtre = pygame.Surface([WIDTH, HEIGHT], pygame.SRCALPHA, 32)
-        filtre = filtre.convert_alpha()
-        if self.clock.state == 'NIGHT':
-            filtre.fill((0,0,10,230))
-            self.display_surface.blit(filtre, (0,0))
-        debug(self.clock.time, 0, 40)
 
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):

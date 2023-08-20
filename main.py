@@ -1,19 +1,19 @@
-import sys, cProfile
-
-import pygame
-
+import pygame, sys, argparse, cProfile
 from settings import *
 from debug import debug
 from src.world import World
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, size= None):
         
         #general setup
         pygame.init()
         pygame.joystick.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        if size == None:
+            self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        elif size == 'full':
+            self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
         pygame.display.set_caption('Proto')
         self.clock = pygame.time.Clock()
         
@@ -28,7 +28,7 @@ class Game:
             '''
             Display Elements
             '''
-            self.screen.fill('black')
+            self.screen.fill('#1e7cb8')
             self.world.run()
             
             '''
@@ -44,6 +44,8 @@ class Game:
                         sys.exit()
                     elif event.key == pygame.K_m : 
                         self.world.spawnEnemy(5)
+                    elif event.key == pygame.K_u:
+                        self.world.open_menu()
                     elif event.key == pygame.K_e :
                         self.world.entity_interact()
                 elif event.type == pygame.JOYDEVICEADDED:
@@ -60,6 +62,11 @@ class Game:
             
 
 if __name__ == '__main__':
+    # parser = argparse.ArgumentParser(description='Description de votre programme')
+    # parser.add_argument('settings', type=str, help='Description du paramètre')
+    # args = parser.parse_args()
+    
+    # game = Game(args.settings)
     game = Game()
     # cProfile.run("game.run()")
     game.run()
