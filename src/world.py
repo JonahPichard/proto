@@ -145,6 +145,12 @@ class World():
             self.player.health -= damage_ammount
             self.player.vulnerable = False
             self.player.hit_time = pygame.time.get_ticks()
+    
+    def trigger_death_particles(self, position, particle_type):
+        self.animation_player.create_particle(position, 'smoke', [self.visible_sprites])
+
+    def open_menu(self):
+        self.game_paused = not self.game_paused
 
 class YsortCameraGroup(pygame.sprite.Group):
     def __init__(self):
