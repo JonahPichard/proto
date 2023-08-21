@@ -1,9 +1,14 @@
 import pygame, random
+from pathfinding.core.grid import Grid
+from pathfinding.finder.a_star import AStarFinder
+from pathfinding.core.diagonal_movement import DiagonalMovement
 from settings import *
 from src.entity import *
 
+from debug import *
+
 class Enemy(Entity):
-    def __init__(self, monster_name, position, groups, obstacle_sprites, damage_player):
+    def __init__(self, monster_name, position, matrix, groups, obstacle_sprites, damage_player, trigger_death_particles):
         super().__init__(groups)
         self.sprite_type = 'enemy'
         
@@ -15,6 +20,16 @@ class Enemy(Entity):
 
         #movement
         self.obstacle_sprites = obstacle_sprites
+        
+        #path
+        self.matrix = matrix
+        self.path = []
+        self.collision_rects = []
+        self.pathfinder = Pathfinder(self.matrix, self)
+
+        self.calculate_path = True
+        self.path_time = None
+        self.path_cooldown = 1000
 
         #stats
         self.monster_name = monster_name
@@ -40,6 +55,7 @@ class Enemy(Entity):
         self.attack_time = None
         self.attack_cooldown = 500
         self.damage_player = damage_player
+        self.trigger_death_particles = trigger_death_particles
 
         #invincibility timer
         self.vulnerable = True
@@ -102,7 +118,11 @@ class Enemy(Entity):
             self.damage_player(self.damage, self.attack_type)
             self.attack_time = pygame.time.get_ticks()
         elif self.state == 'move':
-            self.direction = self.get_player_distance_and_direction(player)[1]
+            # self.direction = self.get_player_distance_and_direction(player)[1]
+            if self.calculate_path :
+                self.pathfinder.create_path(player)
+                self.path_time = pygame.time.get_ticks()
+                self.calculate_path = False
         elif self.state =='hit':
             self.direction = self.get_player_distance_and_direction(player)[1]
             self.direction *= - 1/self.resistance
@@ -110,12 +130,27 @@ class Enemy(Entity):
     def check_death(self, player):
         if self.health <= 0:
             player.gold += self.gold_amount
+            self.trigger_death_particles(self.rect.center, 'smoke')
             self.kill()
+
+    def move(self, speed):
+        if self.direction.magnitude() != 0:
+            self.direction = self.direction.normalize()
+        self.hitbox.centerx += self.direction.x * speed * GAME_UPSCALE
+        self.collision('horizontal')
+        self.hitbox.centery += self.direction.y * speed * GAME_UPSCALE
+        self.collision('vertical')
+        self.check_collisions()
+        self.rect.midbottom = self.hitbox.midbottom
+
+        
 
     def update(self):
         self.cooldowns()
         self.animate()
         self.move(self.speed)
+        self.pathfinder.update()
+        
         
     def enemy_update(self, player):
         self.get_status(player)
@@ -138,4 +173,91 @@ class Enemy(Entity):
         if not self.vulnerable:
             if current_time - self.hit_time >= self.invicilibilty_duration:
                 self.vulnerable = True
+
+        if not self.calculate_path:
+            if current_time - self.path_time >= self.path_cooldown:
+                self.calculate_path = True
+
+
+    def set_path(self, path):
+        self.path = path
+        self.create_collision_rects()
+        self.get_direction()
+    
+    def get_direction(self):
+        if self.collision_rects:
+            start = pygame.math.Vector2(self.rect.center)
+            end = pygame.math.Vector2(self.collision_rects[0].center)
+            if (end - start).magnitude() != 0:
+                self.direction = (end - start).normalize()
+        else:
+            self.direction = pygame.math.Vector2(0,0)
+            self.path = []
+
+    def create_collision_rects(self):
+        if self.path:
+            self.collision_rects = []
+            for node in self.path:
+                x = (node.x * TILE_SIZE * GAME_UPSCALE) + TILE_SIZE * GAME_UPSCALE/2
+                y = (node.y * TILE_SIZE * GAME_UPSCALE) + TILE_SIZE * GAME_UPSCALE/2
+                rect = pygame.Rect((x - TILE_SIZE/2,y - TILE_SIZE/2),(TILE_SIZE,TILE_SIZE))
+                self.collision_rects.append(rect)
+    
+    def check_collisions(self):
+        if self.collision_rects:
+            for rect in self.collision_rects:
+                if rect.collidepoint(self.hitbox.center):
+                    del self.collision_rects[0]
+                    self.get_direction()
+        else:
+            self.pathfinder.empty_path()
                 
+
+
+class Pathfinder:
+    def __init__(self,matrix, enemy):
+    # setup
+        self.matrix = matrix
+        self.grid = Grid(matrix = matrix)
+
+        # pathfinding
+        self.path = []
+
+        #enemy
+        self.enemy = enemy
+        
+        #screen
+        self.display_surface = pygame.display.get_surface()
+
+    def empty_path(self):
+        self.path = []
+
+    def create_path(self, player):
+        # start
+        start_x, start_y = self.enemy.get_coord()
+        start = self.grid.node(start_x,start_y)
+
+        # end
+        end_x,end_y =  player.get_coord()
+        end = self.grid.node(end_x,end_y)
+
+        # path
+        # finder = AStarFinder(diagonal_movement = DiagonalMovement.always)
+        finder = AStarFinder(diagonal_movement = DiagonalMovement.always)
+        self.path,_ = finder.find_path(start,end,self.grid)
+        self.grid.cleanup()
+        self.enemy.set_path(self.path)
+
+    def draw_path(self):
+        if self.path:
+            points = []
+            for node in self.path:
+                x = (node.x * TILE_SIZE * GAME_UPSCALE) + TILE_SIZE * GAME_UPSCALE/2
+                y = (node.y * TILE_SIZE * GAME_UPSCALE) + TILE_SIZE * GAME_UPSCALE/2
+                points.append((x,y))
+
+            pygame.draw.lines(self.display_surface,'#4a4a4a',False,points,5)
+
+    def update(self):
+        pass
+        # self.draw_path()
