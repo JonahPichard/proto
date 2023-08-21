@@ -12,7 +12,7 @@ from src.enemy import Enemy
 from src.house import House
 from src.toolbox.import_world import get_info_map, distance
 from src.ui import UI
-from src.clock import Clock
+from src.daycycle import DayCycle
 
 class World():
     def __init__(self):
@@ -35,7 +35,7 @@ class World():
 
         #sprite setup
         self.createWorld()
-        self.daycycle = Clock()
+        self.daycycle = DayCycle()
 
         #user interface
         self.ui = UI()
@@ -46,6 +46,7 @@ class World():
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
         self.player_attack_logic()
+        self.daycycle.update_state()
         self.daycycle.draw()
         self.ui.display(self.player, self.spawned_enemy)
 
