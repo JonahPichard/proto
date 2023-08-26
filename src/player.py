@@ -16,6 +16,13 @@ class Player(Entity) :
         hb_y_size_reduc = 10
         self.hitbox = self.rect.inflate(0,-hb_y_size_reduc*GAME_UPSCALE).move(0,hb_y_size_reduc/2*GAME_UPSCALE)
 
+        #création image prévisionelle de la création de batiments
+        spritesheet_image_prevue = pygame.image.load('assets/buildings/wall/wall.png').convert_alpha()
+        spritesheet_sprite_prevue = SpriteSheet(spritesheet_image)
+        self.image_prevue = spritesheet_sprite_prevue.get_image(0, 0, 16, 16)
+        self.rect_prevue = self.image_prevue.get_rect(topleft = position)
+        hb_y_size_reduc_prevue = 10
+
         #stats
         self.stats = player_data
         self.health = self.stats['health']
@@ -145,15 +152,10 @@ class Player(Entity) :
                                 building_list.append(building)
                             gap = 100
                             for _ in range(2):
-                                dirx , diry = self.convStatusToDirection()
-                                #réduction des coordonnés en cases et reconversion en coordonnés
-                                taledbuildx = (self.hitbox.x // TILE_SIZE) * TILE_SIZE
-                                taledbuildy = (self.hitbox.y // TILE_SIZE) * TILE_SIZE
-                                position = [(dirx*TILE_SIZE_BUILDINGS) + taledbuildx , (diry*TILE_SIZE_BUILDINGS) + taledbuildy]
+                                position = self.posBuild()
+                                #check if building exist at same pos (add code later)
                                 Buildings((building_list[random.randint(0, len(building_list)-1)]), position, self.group, self.obstacle_sprites)
                                 
-
-            
             '''
             Joystick
             '''
@@ -199,6 +201,29 @@ class Player(Entity) :
             diry = 1
         return dirx,diry
                                       
+    def posBuild(self):
+        dirx , diry = self.convStatusToDirection()                   
+        varx = (-self.hitbox.x +((TILE_SIZE * GAME_UPSCALE)/2)) % (TILE_SIZE * GAME_UPSCALE) + (TILE_SIZE * GAME_UPSCALE) * dirx - (TILE_SIZE * GAME_UPSCALE)
+        vary = (-self.hitbox.y +((TILE_SIZE * GAME_UPSCALE)/2)) % (TILE_SIZE * GAME_UPSCALE) + (TILE_SIZE * GAME_UPSCALE) * diry - (TILE_SIZE * GAME_UPSCALE)
+        if dirx > 0 :
+            varx = (-self.hitbox.x +((TILE_SIZE * GAME_UPSCALE)/2)) % (TILE_SIZE * GAME_UPSCALE) + ((TILE_SIZE * GAME_UPSCALE) ) * dirx 
+        if diry > 0 :
+            vary = (-self.hitbox.y +((TILE_SIZE * GAME_UPSCALE)/2)) % (TILE_SIZE * GAME_UPSCALE) + ((TILE_SIZE * GAME_UPSCALE) ) * diry 
+        return [varx + self.hitbox.x +1, vary + self.hitbox.y +1]
+    
+    def build_prevue(self):
+        position = self.posBuild()
+        building_path = f'assets/buildings/wall'
+        row = 0
+        for spritesheet in self.animations.keys() :
+            full_path = f"{building_path}/wall.png"
+            spritesheet_image_prevue = pygame.image.load(full_path).convert_alpha()
+            spritesheet_sprite = SpriteSheet(spritesheet_image_prevue)
+
+            num_rows = spritesheet_image_prevue.get_height() // TILE_SIZE
+            for col in range(num_rows):
+                self.animations[spritesheet].append(spritesheet_sprite.get_image(row * 16, col * 16, 16, 16))
+            row+=1
 
     def switch_weapon(self):
         if self.can_switch_weapon :
@@ -247,3 +272,5 @@ class Player(Entity) :
         self.get_status()
         self.animate()
         self.move(self.speed)
+        if (self.weapon_index == 1):
+            self.build_prevue()

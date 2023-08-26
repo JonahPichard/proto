@@ -13,6 +13,7 @@ Création d'une branche
 
 Mettre à jour les fichiers
 `git pull `
+
 liste des branches
 `git branch`
 
