@@ -4,7 +4,8 @@ def get_info_map(map_name):
     tmxdata = pytmx.TiledMap("assets\\map\\tmx\\"+map_name+".tmx")
     layout = {
             "boundary" : tmxdata.get_layer_by_name("collision").data,
-            "entity" : tmxdata.get_layer_by_name("entity").data
+            "entity" : tmxdata.get_layer_by_name("entity").data,
+            "object" : tmxdata.get_layer_by_name("object").data
             }
     return layout
 

@@ -106,11 +106,12 @@ class World():
                         else:
                             self.matrix[row_index][col_index] = 1
                         if style =='entity':
-                            if tile_id == 50 :
+                            #TODO : automatiser tile_id dans Tiled
+                            if tile_id == 82 :
                                 player_spawn.append([x, y])
-                            if tile_id == 48 :
+                            if tile_id == 80 :
                                 self.mob_spawn.append([x, y])
-                            if tile_id == 49 :
+                            if tile_id == 81 :
                                 house_spawn.append([x, y])
         # TODO faire une fonction pour chech if empty
         if len(player_spawn) == 0 :
