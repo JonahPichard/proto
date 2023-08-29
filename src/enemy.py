@@ -133,22 +133,22 @@ class Enemy(Entity):
             self.trigger_death_particles(self.rect.center, 'smoke')
             self.kill()
 
-    def move(self, speed):
+    def move(self, speed, dt):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
-        self.hitbox.centerx += self.direction.x * speed * GAME_UPSCALE
+        self.hitbox.centerx += self.direction.x * speed * dt * GAME_UPSCALE
         self.collision('horizontal')
-        self.hitbox.centery += self.direction.y * speed * GAME_UPSCALE
+        self.hitbox.centery += self.direction.y * speed * dt * GAME_UPSCALE
         self.collision('vertical')
         self.check_collisions()
         self.rect.midbottom = self.hitbox.midbottom
 
         
 
-    def update(self):
+    def update(self, dt):
         self.cooldowns()
         self.animate()
-        self.move(self.speed)
+        self.move(dt, self.speed)
         self.pathfinder.update()
         
         

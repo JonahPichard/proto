@@ -75,5 +75,5 @@ class Particle(pygame.sprite.Sprite):
         else:
             self.image = self.frames[int(self.frame_index)]
             
-    def update(self):
+    def update(self, dt):
         self.animate()

@@ -1,3 +1,4 @@
+import time
 from enum import Enum
 
 import pygame
@@ -12,17 +13,17 @@ class DayState(Enum):
     DAY_RISE = "DAY_RISE"
 
 time_limite_dict = {
-    DayState.DAY : 10000,
-    DayState.NIGHT_FALL : 2000,
-    DayState.NIGHT : 10000,
-    DayState.DAY_RISE : 2000
+    DayState.DAY : 10,
+    DayState.NIGHT_FALL : 2,
+    DayState.NIGHT : 10,
+    DayState.DAY_RISE : 2
 }
 
 class DayCycle():
 
     def __init__(self,light_group, state = DayState.DAY):
         self.display_surface = pygame.display.get_surface()
-        self.time = pygame.time.get_ticks()
+        self.time = time.time()
         self.state = state
         self.time_limite_dict = time_limite_dict
         self.time_limite = self.time_limite_dict[self.state]
@@ -30,9 +31,8 @@ class DayCycle():
 
         self.light_group = light_group
     
-    def update_state(self):
-        ticks = pygame.time.get_ticks()
-        debug(self.time,100)
+    def update_state(self, dt):
+        self.time += dt
         if self.time >= self.time_limite :
             match self.state :
                 case DayState.DAY:
@@ -43,9 +43,9 @@ class DayCycle():
                     self.state = DayState.DAY_RISE
                 case DayState.DAY_RISE:
                     self.state = DayState.DAY
-            self.offset = ticks
+            self.time = 0
             self.time_limite = self.time_limite_dict[self.state]
-        self.time = pygame.time.get_ticks() - self.offset
+        
 
     def change_state(self, state):
         self.state = state

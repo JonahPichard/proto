@@ -10,7 +10,7 @@ class CameraPosition():
         self.offset = pygame.math.Vector2()
         self.ground_offset = pygame.math.Vector2()
 
-    def camera_update(self, player ):
+    def position_update(self, player ):
         self.offset = player.rect.center - self.screen_offset
         self.ground_offset = self.rect.topleft - self.offset
 

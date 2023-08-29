@@ -64,25 +64,23 @@ class World():
         #particle
         self.animation_player = AnimationPlayer()
 
-    def run(self):
-        self.camera.camera_update(self.player)
-        # self.display_surface.blit(self.ground_surf,self.ground_rect)
+    def run(self, dt):
+        self.camera.position_update(self.player)
+        self.visible_sprites.update(dt)
+        self.visible_sprites.enemy_update(self.player)
+        self.daycycle.update_state(dt)
 
         self.visible_sprites.draw(self.ground_surf, self.player)
-        self.visible_sprites.update()
-        self.visible_sprites.enemy_update(self.player)
         self.player_attack_logic()
-        self.daycycle.update_state()
         self.daycycle.draw()
         self.ui.display(self.player, self.spawned_enemy)
         if self.game_paused:
             self.upgrade.display()
         else:
             #update and draw the game
-            self.visible_sprites.update()
+            self.visible_sprites.update(dt)
             self.visible_sprites.enemy_update(self.player)
             self.player_attack_logic()
-        debug(self.camera.offset,100)
 
     def createAttack(self):
         self.current_attack = Weapon(self.player, [self.visible_sprites, self.attack_sprites])

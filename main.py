@@ -1,4 +1,6 @@
-import pygame, sys, argparse, cProfile
+import sys, time, argparse, cProfile
+
+import pygame
 from settings import *
 from debug import debug
 from src.world import World
@@ -17,6 +19,9 @@ class Game:
         pygame.display.set_caption('Proto')
         self.clock = pygame.time.Clock()
         
+        # delta time
+        self.dt = 0
+        self.prevtime = time.time()
         '''
         Init Element
         '''     
@@ -24,12 +29,13 @@ class Game:
            
     def run(self):
         while True:
-            
+            self.dt = time.time() - self.prevtime
+            self.prevtime = time.time()
             '''
             Display Elements
             '''
             self.screen.fill('#1e7cb8')
-            self.world.run()
+            self.world.run(self.dt)
             
             '''
             Event Handler

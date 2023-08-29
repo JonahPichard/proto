@@ -198,11 +198,11 @@ class Player(Entity) :
              if current_time - self.hit_time >= self.invicilibilty_duration:
                 self.vulnerable = True
                 
-    def update(self):
+    def update(self,dt):
         self.input()
         self.cooldowns()
         self.get_status()
         self.animate()
-        self.move(self.speed)
+        self.move(dt, self.speed)
 
         x, y = self.rect.centerx // TILE_SIZE // GAME_UPSCALE, self.rect.centery // TILE_SIZE // GAME_UPSCALE

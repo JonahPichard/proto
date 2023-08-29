@@ -26,7 +26,7 @@ HEALTH_COLOR = 'red'
 UI_BORDER_COLOR_ACTIVE = 'gold'
 
 # Player
-player_data = {'health': 100, 'damage' : 5, 'speed': 1.5}
+player_data = {'health': 100, 'damage' : 5, 'speed': 75}
 PLAYER_SIZE = 16
 PLAYER_ATTACK_COOLDOWN = 300
 PLAYER_SWITCH_WEAPON_COOLDOWN = 500
@@ -38,8 +38,8 @@ weapons_data = {
 
 # Enemys
 monster_data = {
-    'skull' : {'health' : 20,    'damage' : 5, 'gold_amount': 1, 'attack_type' : 'slash', 'attack_sound' : None, 'speed' : 1.4, 'resistance' : 3, 'attack_radius': 20, 'notice_radius': 1500},
-    'cyclope' : {'health' : 100, 'damage' : 15, 'gold_amount': 5, 'attack_type' : 'claw',  'attack_sound' : None, 'speed' : 1, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 1000}}
+    'skull' : {'health' : 20,    'damage' : 5, 'gold_amount': 1, 'attack_type' : 'slash', 'attack_sound' : None, 'speed' : 70, 'resistance' : 3, 'attack_radius': 20, 'notice_radius': 1500},
+    'cyclope' : {'health' : 100, 'damage' : 15, 'gold_amount': 5, 'attack_type' : 'claw',  'attack_sound' : None, 'speed' : 50, 'resistance' : 10, 'attack_radius': 50, 'notice_radius': 1000}}
 
 # House
 house_data = {

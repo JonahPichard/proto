@@ -16,12 +16,12 @@ class Entity(pygame.sprite.Sprite):
         self.animation_speed = 0.15
 
         
-    def move(self, speed):
+    def move(self, dt, speed):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
-        self.hitbox.x += self.direction.x * speed * GAME_UPSCALE
+        self.hitbox.x += self.direction.x * speed * dt * GAME_UPSCALE
         self.collision('horizontal')
-        self.hitbox.y += self.direction.y * speed * GAME_UPSCALE
+        self.hitbox.y += self.direction.y * speed * dt * GAME_UPSCALE
         self.collision('vertical')
         
         self.rect.midbottom = self.hitbox.midbottom
