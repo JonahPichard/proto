@@ -15,6 +15,9 @@ from src.ui import UI
 from src.particle import AnimationPlayer
 from src.upgrade import Upgrade
 from src.daycycle import DayCycle
+from src.light import LightGroups
+from src.camera import CameraPosition
+
 
 class World():
     def __init__(self):
@@ -22,15 +25,25 @@ class World():
         self.game_paused = False
         # map
         self.map_name = EMPTY_MAP
+
         # get the display surface
         self.display_surface = pygame.display.get_surface()
+
+        #Background surface
+        self.ground_surf = pygame.image.load('assets\\map\\png\\map_empty_80_45.png').convert()
+        self.ground_surf = pygame.transform.scale(self.ground_surf, (WIDTH * GAME_UPSCALE, HEIGHT * GAME_UPSCALE))
+        self.ground_rect = self.ground_surf.get_rect(topleft= (0, 0))
+        
+        # Camera
+        self.camera = CameraPosition(self.ground_rect)
+
         # spirte group setup
-        self.visible_sprites = YsortCameraGroup()
+        self.visible_sprites = YsortCameraGroup(self.camera)
+        self.light_source_sprite = LightGroups(self.camera)
         self.obstacle_sprites = pygame.sprite.Group()
+        self.interact_sprite = pygame.sprite.Group()
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
-        self.interact_sprite = pygame.sprite.Group()
-        self.light_source_sprite = pygame.sprite.Group()
 
         # mob spawn zone 
         self.mob_spawn = []
@@ -42,7 +55,7 @@ class World():
 
         #sprite setup
         self.createWorld()
-        self.daycycle = DayCycle()
+        self.daycycle = DayCycle(self.light_source_sprite)
 
         #user interface
         self.ui = UI()
@@ -50,9 +63,12 @@ class World():
         
         #particle
         self.animation_player = AnimationPlayer()
-        
+
     def run(self):
-        self.visible_sprites.draw(self.player)
+        self.camera.camera_update(self.player)
+        # self.display_surface.blit(self.ground_surf,self.ground_rect)
+
+        self.visible_sprites.draw(self.ground_surf, self.player)
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
         self.player_attack_logic()
@@ -66,6 +82,7 @@ class World():
             self.visible_sprites.update()
             self.visible_sprites.enemy_update(self.player)
             self.player_attack_logic()
+        debug(self.camera.offset,100)
 
     def createAttack(self):
         self.current_attack = Weapon(self.player, [self.visible_sprites, self.attack_sprites])
@@ -109,7 +126,7 @@ class World():
             house_spawn.append([WIDTH/2, HEIGHT/2])
             print(f'INFO - Pas de tile de spawnde la maison dans {self.map_name}')
         
-        self.player = Player((random.choice(player_spawn)), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack)   
+        self.player = Player((random.choice(player_spawn)), [self.visible_sprites], self.obstacle_sprites, self.createAttack, self.destory_attack, self.light_source_sprite)   
         self.house = House((random.choice(house_spawn)), [self.visible_sprites, self.obstacle_sprites, self.interact_sprite])
         self.spawnEnemy(0)
 
@@ -154,37 +171,18 @@ class World():
         self.game_paused = not self.game_paused
 
 class YsortCameraGroup(pygame.sprite.Group):
-    def __init__(self):
-        
-        #general setup
+    def __init__(self, camera: CameraPosition):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
-        self.half_width = self.display_surface.get_size()[0]/2
-        self.half_height = self.display_surface.get_size()[1]/2
-        self.offset = pygame.math.Vector2()
-        
-        # TODO Agrandir la map avec de l'eau pour ne pas voir le noir sur les bord de la map       
-        self.ground_surf = pygame.image.load('assets\\map\\png\\map_empty_80_45.png').convert()
-        # TODO Remplacer WIDTH et HEIGHT par la vrai taiile de la map
-        self.ground_surf = pygame.transform.scale(self.ground_surf, (WIDTH * GAME_UPSCALE, HEIGHT * GAME_UPSCALE))
-        self.ground_rect = self.ground_surf.get_rect(topleft= (0, 0))
+        self.camera = camera
 
-    def draw(self, player):
-        
-        #getting the offset
-        self.offset.x = player.rect.centerx - self.half_width
-        self.offset.y = player.rect.centery - self.half_height
-        # self.offset.x = 0
-        # self.offset.y = 0
-        
-        ground_surf_pos = self.ground_rect.topleft - self.offset
-        self.display_surface.blit(self.ground_surf, ground_surf_pos)
-        
-        for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
-            offset_position = sprite.rect.topleft - self.offset
+    def draw(self, surface : pygame.surface, player : Player):
+        self.display_surface.blit(surface, self.camera.ground_offset)
+        for sprite in sorted(self.sprites() , key= lambda sprite : sprite.rect.centery):
+            offset_position = sprite.rect.topleft - self.camera.offset
             self.display_surface.blit(sprite.image, offset_position)
 
-    def enemy_update(self, player):
+    def enemy_update(self, player : Player):
         enemy_sprites = [sprite for sprite in self.sprites() if hasattr(sprite, 'sprite_type') and sprite.sprite_type == 'enemy'] 
         for enemy in enemy_sprites:
             enemy.enemy_update(player)

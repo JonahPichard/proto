@@ -20,13 +20,15 @@ time_limite_dict = {
 
 class DayCycle():
 
-    def __init__(self, state = DayState.DAY):
+    def __init__(self,light_group, state = DayState.DAY):
         self.display_surface = pygame.display.get_surface()
         self.time = pygame.time.get_ticks()
         self.state = state
         self.time_limite_dict = time_limite_dict
         self.time_limite = self.time_limite_dict[self.state]
         self.offset = self.time
+
+        self.light_group = light_group
     
     def update_state(self):
         ticks = pygame.time.get_ticks()
@@ -51,20 +53,18 @@ class DayCycle():
         self.time_limite = self.time_limite_dict[self.state]
 
     def draw(self):
-        
-        filtre = pygame.Surface([WIDTH, HEIGHT], pygame.SRCALPHA, 32)
-        filtre = filtre.convert_alpha()
         match self.state:
             case DayState.NIGHT_FALL:
                 color = self.night_fall()
-                filtre.fill(color)
+                filtre = self.draw_filter(color)
                 self.display_surface.blit(filtre, (0,0))
             case DayState.NIGHT:
-                filtre.fill((0,0,10,230))
+                color = (0,0,10,230)
+                filtre = self.draw_filter(color)
                 self.display_surface.blit(filtre, (0,0))
             case DayState.DAY_RISE:
                 color = self.sun_rise()
-                filtre.fill(color)
+                filtre = self.draw_filter(color)
                 self.display_surface.blit(filtre, (0,0))
 
     def night_fall(self):
@@ -76,3 +76,10 @@ class DayCycle():
         color = [0,0,10,0]
         color[3] = 230 - self.time*230/self.time_limite_dict[DayState.DAY_RISE]
         return color
+    
+    def draw_filter(self, color):
+        filtre = pygame.Surface([WIDTH, HEIGHT], pygame.SRCALPHA, 32)
+        filtre = filtre.convert_alpha()
+        filtre.fill(color)
+        self.light_group.add_light(filtre)
+        return filtre

@@ -2,11 +2,12 @@ import pygame
 from settings import *
 from enum import Enum
 from src.entity import *
+from src.light import SimpleLight
 
 from debug import debug
 
 class Player(Entity) : 
-    def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack):
+    def __init__(self, position, groups, obstacle_sprites, create_attack, destory_attack, light_group):
         super().__init__(groups)
         
         spritesheet_image = pygame.image.load('assets/player/idle.png').convert_alpha()
@@ -51,6 +52,10 @@ class Player(Entity) :
         self.vulnerable = True
         self.hit_time = None
         self.invicilibilty_duration = 500
+
+        #Light
+        relative_position = pygame.math.Vector2(self.rect.topleft) - self.rect.center
+        SimpleLight(light_group, self.rect, relative_position, 200)
     
     def import_player_assets(self):
         character_path = 'assets/player'

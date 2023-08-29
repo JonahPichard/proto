@@ -14,6 +14,7 @@ class Entity(pygame.sprite.Sprite):
         self.frame_index = 0
         self.status = 'down_idle'
         self.animation_speed = 0.15
+
         
     def move(self, speed):
         if self.direction.magnitude() != 0:
